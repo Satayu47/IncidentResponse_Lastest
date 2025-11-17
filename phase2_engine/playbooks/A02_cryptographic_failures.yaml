@@ -1,0 +1,126 @@
+# A02: Cryptographic Failures Playbook
+id: A02_cryptographic_failures
+name: Cryptographic Failures Response
+description: >
+  Response playbook for cryptographic failures including weak encryption,
+  sensitive data exposure, and missing TLS/encryption.
+severity: critical
+category: cryptography
+
+phases:
+  preparation:
+    - action: verify_encryption_standards
+      name: Verify Encryption Standards
+      message: Ensure strong encryption is configured across all systems
+      ui_description: Validate that approved cryptographic algorithms are in use
+      automated: false
+
+    - action: inventory_sensitive_data
+      name: Inventory Sensitive Data
+      message: Maintain catalog of sensitive data locations
+      ui_description: Know where PII, credentials, and sensitive data are stored
+      automated: false
+
+  detection_analysis:
+    - action: identify_exposure_scope
+      name: Identify Exposure Scope
+      message: Determine what data was exposed or compromised
+      ui_description: Map out all potentially exposed sensitive information
+      automated: false
+
+    - action: analyze_encryption_weakness
+      name: Analyze Encryption Weakness
+      message: Identify the cryptographic vulnerability
+      ui_description: Determine if weak cipher, missing encryption, or key compromise
+      automated: false
+
+    - action: check_data_in_transit
+      name: Check Data in Transit
+      message: Verify if data was intercepted during transmission
+      ui_description: Analyze network traffic logs for potential interception
+      automated: true
+      params:
+        protocols: ["http", "ftp", "telnet"]
+
+  containment:
+    - action: enforce_strong_tls
+      name: Enforce Strong TLS
+      message: Immediately enforce TLS 1.2+ across all services
+      ui_description: Disable weak SSL/TLS versions and insecure ciphers
+      automated: true
+      params:
+        min_tls_version: "1.2"
+        disable_weak_ciphers: true
+
+    - action: rotate_encryption_keys
+      name: Rotate Encryption Keys
+      message: Rotate all potentially compromised encryption keys
+      ui_description: Generate and deploy new cryptographic keys
+      automated: true
+      params:
+        key_types: ["data_encryption", "api_keys"]
+
+    - action: notify_affected_users
+      name: Notify Affected Users
+      message: Inform users of potential data exposure
+      ui_description: Send breach notifications per regulatory requirements
+      automated: false
+
+  eradication:
+    - action: implement_proper_encryption
+      name: Implement Proper Encryption
+      message: Deploy strong encryption for all sensitive data
+      ui_description: Use AES-256 or equivalent for data at rest and in transit
+      automated: false
+
+    - action: remove_plaintext_storage
+      name: Remove Plaintext Storage
+      message: Eliminate any plaintext storage of sensitive data
+      ui_description: Ensure passwords, PII, and secrets are properly encrypted
+      automated: false
+
+    - action: upgrade_crypto_libraries
+      name: Upgrade Cryptographic Libraries
+      message: Update to latest secure cryptographic libraries
+      ui_description: Patch any vulnerable encryption implementations
+      automated: false
+
+  recovery:
+    - action: re_encrypt_data
+      name: Re-encrypt Data
+      message: Re-encrypt all sensitive data with strong algorithms
+      ui_description: Migrate data to new encryption with secure keys
+      automated: false
+
+    - action: validate_encryption
+      name: Validate Encryption
+      message: Confirm encryption is properly implemented
+      ui_description: Test and verify encryption strength and coverage
+      automated: false
+
+    - action: monitor_for_abuse
+      name: Monitor for Abuse
+      message: Watch for misuse of exposed data
+      ui_description: Monitor for credential stuffing or identity theft using exposed data
+      automated: true
+      params:
+        monitoring_duration_days: 90
+
+  post_incident:
+    - action: document_cryptographic_incident
+      name: Document Cryptographic Incident
+      message: Create detailed incident report
+      ui_description: Record what data was exposed and remediation steps
+      automated: false
+
+    - action: conduct_crypto_audit
+      name: Conduct Cryptographic Audit
+      message: Audit all cryptographic implementations
+      ui_description: Review encryption across entire infrastructure
+      automated: false
+
+    - action: update_crypto_policy
+      name: Update Cryptographic Policy
+      message: Strengthen organizational encryption standards
+      ui_description: Define mandatory encryption requirements and approved algorithms
+      automated: false

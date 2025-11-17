@@ -1,0 +1,129 @@
+# A06: Vulnerable and Outdated Components Playbook
+id: A06_vulnerable_components
+name: Vulnerable Components Response
+description: >
+  Response playbook for vulnerable and outdated components including
+  unpatched software, libraries with known CVEs, and outdated dependencies.
+severity: high
+category: vulnerable_components
+
+phases:
+  preparation:
+    - action: maintain_software_inventory
+      name: Maintain Software Inventory
+      message: Keep current inventory of all components and versions
+      ui_description: Track all libraries, frameworks, and dependencies in use
+      automated: false
+
+    - action: establish_patch_management
+      name: Establish Patch Management
+      message: Implement regular patching process
+      ui_description: Define procedures for timely security updates
+      automated: false
+
+  detection_analysis:
+    - action: identify_vulnerable_component
+      name: Identify Vulnerable Component
+      message: Determine which component has the vulnerability
+      ui_description: Identify the specific library/framework and CVE
+      automated: false
+
+    - action: assess_vulnerability_severity
+      name: Assess Vulnerability Severity
+      message: Evaluate CVSS score and exploitability
+      ui_description: Review CVE details and determine urgency
+      automated: true
+      params:
+        cve_lookup: true
+
+    - action: check_exploitation_evidence
+      name: Check for Exploitation Evidence
+      message: Look for signs of active exploitation
+      ui_description: Scan logs for indicators of vulnerability exploitation
+      automated: true
+      params:
+        scan_depth: "comprehensive"
+
+  containment:
+    - action: isolate_affected_systems
+      name: Isolate Affected Systems
+      message: Quarantine systems running vulnerable component
+      ui_description: Restrict network access for vulnerable systems
+      automated: true
+      params:
+        isolation_level: "network_segment"
+
+    - action: apply_virtual_patch
+      name: Apply Virtual Patch
+      message: Deploy WAF/IPS rules to block exploitation
+      ui_description: Use temporary protections while preparing permanent fix
+      automated: true
+      params:
+        protection_type: "waf_rule"
+
+    - action: disable_vulnerable_feature
+      name: Disable Vulnerable Feature
+      message: Turn off the vulnerable functionality
+      ui_description: Temporarily disable feature that uses vulnerable component
+      automated: false
+
+  eradication:
+    - action: update_vulnerable_component
+      name: Update Vulnerable Component
+      message: Upgrade to patched version
+      ui_description: Deploy latest secure version of the component
+      automated: false
+
+    - action: remove_unnecessary_components
+      name: Remove Unnecessary Components
+      message: Eliminate unused dependencies
+      ui_description: Uninstall components that aren't needed
+      automated: false
+
+    - action: validate_patch
+      name: Validate Patch
+      message: Test that update resolves vulnerability
+      ui_description: Verify vulnerability is fixed and no regressions introduced
+      automated: false
+
+  recovery:
+    - action: restore_system_operations
+      name: Restore System Operations
+      message: Bring patched systems back online
+      ui_description: Return systems to production with updated components
+      automated: false
+
+    - action: verify_vulnerability_eliminated
+      name: Verify Vulnerability Eliminated
+      message: Rescan to confirm CVE is resolved
+      ui_description: Run vulnerability scan to validate fix
+      automated: true
+      params:
+        scan_type: "targeted_cve"
+
+    - action: monitor_for_exploitation
+      name: Monitor for Exploitation Attempts
+      message: Watch for continued attack attempts
+      ui_description: Monitor for exploitation attempts against the CVE
+      automated: true
+      params:
+        monitoring_duration_days: 30
+
+  post_incident:
+    - action: document_component_incident
+      name: Document Component Incident
+      message: Create incident documentation
+      ui_description: Record CVE details, systems affected, and remediation
+      automated: false
+
+    - action: review_dependency_management
+      name: Review Dependency Management
+      message: Assess software supply chain security
+      ui_description: Evaluate how dependencies are tracked and updated
+      automated: false
+
+    - action: automate_vulnerability_scanning
+      name: Automate Vulnerability Scanning
+      message: Implement continuous dependency scanning
+      ui_description: Deploy tools to automatically detect vulnerable components
+      automated: false

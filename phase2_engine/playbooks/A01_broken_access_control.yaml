@@ -1,0 +1,127 @@
+# A01: Broken Access Control Playbook
+id: A01_broken_access_control
+name: Broken Access Control Response
+description: >
+  Response playbook for broken access control incidents including privilege escalation,
+  IDOR, and unauthorized access attempts.
+severity: high
+category: access_control
+
+phases:
+  preparation:
+    - action: verify_access_logs
+      name: Verify Access Logging Enabled
+      message: Ensure comprehensive access logging is in place
+      ui_description: Confirm that all access attempts are being logged with sufficient detail
+      automated: false
+
+    - action: review_rbac_policy
+      name: Review RBAC Policy
+      message: Validate role-based access control configurations
+      ui_description: Check that authorization policies are properly defined and enforced
+      automated: false
+
+  detection_analysis:
+    - action: analyze_access_patterns
+      name: Analyze Access Patterns
+      message: Review access logs for anomalous patterns
+      ui_description: Identify unusual access patterns, privilege escalations, or IDOR attempts
+      automated: true
+      params:
+        lookback_hours: 24
+
+    - action: identify_affected_resources
+      name: Identify Affected Resources
+      message: Determine which resources were accessed without authorization
+      ui_description: Map out all resources that may have been compromised
+      automated: false
+
+    - action: assess_data_exposure
+      name: Assess Data Exposure
+      message: Evaluate what data may have been exposed
+      ui_description: Determine sensitivity and scope of potentially exposed data
+      automated: false
+
+  containment:
+    - action: revoke_unauthorized_access
+      name: Revoke Unauthorized Access
+      message: Immediately revoke access for affected accounts
+      ui_description: Disable or restrict accounts that performed unauthorized access
+      automated: true
+      params:
+        action_type: suspend_account
+
+    - action: enable_additional_authz_checks
+      name: Enable Additional Authorization Checks
+      message: Implement temporary enhanced authorization validation
+      ui_description: Add extra authorization checks at application and API layers
+      automated: true
+      params:
+        validation_level: strict
+
+    - action: isolate_affected_services
+      name: Isolate Affected Services
+      message: Temporarily restrict access to compromised resources
+      ui_description: Limit access to affected services while investigation continues
+      automated: false
+
+  eradication:
+    - action: patch_access_control_flaw
+      name: Patch Access Control Vulnerability
+      message: Deploy fix for the access control weakness
+      ui_description: Apply code or configuration changes to eliminate the vulnerability
+      automated: false
+
+    - action: update_authorization_rules
+      name: Update Authorization Rules
+      message: Strengthen authorization policies and rules
+      ui_description: Implement proper authorization checks for all sensitive operations
+      automated: false
+
+    - action: rotate_affected_credentials
+      name: Rotate Affected Credentials
+      message: Force password/token rotation for impacted accounts
+      ui_description: Ensure compromised credentials are invalidated
+      automated: true
+      params:
+        scope: affected_users
+
+  recovery:
+    - action: restore_normal_access
+      name: Restore Normal Access
+      message: Gradually restore access for legitimate users
+      ui_description: Re-enable access with new authorization controls in place
+      automated: false
+
+    - action: monitor_access_patterns
+      name: Monitor Access Patterns
+      message: Implement enhanced monitoring for access anomalies
+      ui_description: Watch for recurrence or similar attack patterns
+      automated: true
+      params:
+        duration_hours: 72
+
+    - action: validate_authorization_fix
+      name: Validate Authorization Fix
+      message: Confirm that access control issue is resolved
+      ui_description: Test that unauthorized access is now properly blocked
+      automated: false
+
+  post_incident:
+    - action: document_incident
+      name: Document Incident
+      message: Create comprehensive incident report
+      ui_description: Record timeline, impact, and response actions taken
+      automated: false
+
+    - action: conduct_access_control_audit
+      name: Conduct Access Control Audit
+      message: Perform full audit of access control mechanisms
+      ui_description: Review all authorization points for similar vulnerabilities
+      automated: false
+
+    - action: update_security_training
+      name: Update Security Training
+      message: Incorporate lessons learned into developer training
+      ui_description: Ensure team understands proper authorization implementation
+      automated: false

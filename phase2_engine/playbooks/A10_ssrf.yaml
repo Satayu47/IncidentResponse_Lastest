@@ -1,0 +1,130 @@
+# A10: Server-Side Request Forgery (SSRF) Playbook
+id: A10_ssrf
+name: SSRF Attack Response
+description: >
+  Response playbook for Server-Side Request Forgery attacks including
+  cloud metadata access, internal port scanning, and firewall bypass.
+severity: high
+category: ssrf
+
+phases:
+  preparation:
+    - action: review_url_validation
+      name: Review URL Validation
+      message: Ensure proper URL validation is in place
+      ui_description: Verify that user-supplied URLs are properly validated
+      automated: false
+
+    - action: configure_network_segmentation
+      name: Configure Network Segmentation
+      message: Implement proper network isolation
+      ui_description: Ensure internal services aren't accessible from DMZ
+      automated: false
+
+  detection_analysis:
+    - action: analyze_ssrf_attempt
+      name: Analyze SSRF Attempt
+      message: Review the SSRF payload and target
+      ui_description: Identify what internal resources were targeted
+      automated: true
+      params:
+        log_sources: ["application", "proxy", "firewall"]
+
+    - action: check_metadata_access
+      name: Check Cloud Metadata Access
+      message: Verify if cloud metadata was accessed
+      ui_description: Check for access to instance metadata endpoints
+      automated: true
+      params:
+        cloud_providers: ["aws", "azure", "gcp"]
+
+    - action: assess_internal_exposure
+      name: Assess Internal Exposure
+      message: Determine what internal services were reached
+      ui_description: Identify internal systems that may have been probed
+      automated: false
+
+  containment:
+    - action: block_internal_urls
+      name: Block Internal URL Schemes
+      message: Restrict internal URL schemes
+      ui_description: Block file://, localhost, and internal IP ranges
+      automated: true
+      params:
+        blocked_schemes: ["file", "gopher", "ftp"]
+        blocked_hosts: ["localhost", "127.0.0.1", "169.254.169.254"]
+
+    - action: enable_egress_filtering
+      name: Enable Egress Filtering
+      message: Restrict outbound connections
+      ui_description: Limit which external resources can be fetched
+      automated: true
+      params:
+        whitelist_mode: true
+
+    - action: block_metadata_endpoint
+      name: Block Metadata Endpoint Access
+      message: Prevent access to cloud metadata
+      ui_description: Block 169.254.169.254 and similar metadata endpoints
+      automated: true
+      params:
+        endpoints: ["169.254.169.254", "metadata.google.internal"]
+
+  eradication:
+    - action: implement_url_validation
+      name: Implement URL Validation
+      message: Deploy proper URL validation logic
+      ui_description: Use allowlist for permitted domains and protocols
+      automated: false
+
+    - action: add_network_controls
+      name: Add Network Controls
+      message: Strengthen network isolation
+      ui_description: Ensure application layer can't reach internal services
+      automated: false
+
+    - action: use_safe_url_fetching
+      name: Use Safe URL Fetching Library
+      message: Implement SSRF-safe HTTP client
+      ui_description: Use libraries with built-in SSRF protections
+      automated: false
+
+  recovery:
+    - action: restore_service
+      name: Restore Service
+      message: Re-enable URL fetching with protections
+      ui_description: Bring functionality back online with SSRF safeguards
+      automated: false
+
+    - action: validate_ssrf_fix
+      name: Validate SSRF Fix
+      message: Confirm SSRF vulnerability is resolved
+      ui_description: Test that internal resources can't be accessed
+      automated: false
+
+    - action: monitor_for_ssrf_attempts
+      name: Monitor for SSRF Attempts
+      message: Watch for continued SSRF probes
+      ui_description: Alert on suspicious URL patterns or internal access attempts
+      automated: true
+      params:
+        monitoring_duration_days: 30
+
+  post_incident:
+    - action: document_ssrf_incident
+      name: Document SSRF Incident
+      message: Create incident report
+      ui_description: Record SSRF attack details and remediation
+      automated: false
+
+    - action: review_url_handling
+      name: Review URL Handling
+      message: Audit all URL processing code
+      ui_description: Check entire codebase for SSRF vulnerabilities
+      automated: false
+
+    - action: update_ssrf_training
+      name: Update SSRF Training
+      message: Train developers on SSRF prevention
+      ui_description: Educate team on secure URL handling practices
+      automated: false

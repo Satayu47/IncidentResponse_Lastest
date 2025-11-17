@@ -1,0 +1,128 @@
+# A03: Injection Playbook
+id: A03_injection
+name: Injection Attack Response
+description: >
+  Response playbook for injection attacks including SQL injection, XSS,
+  command injection, and other code injection vulnerabilities.
+severity: critical
+category: injection
+
+phases:
+  preparation:
+    - action: verify_waf_enabled
+      name: Verify WAF Enabled
+      message: Ensure Web Application Firewall is active
+      ui_description: Confirm WAF rules are enabled to block injection patterns
+      automated: false
+
+    - action: review_input_validation
+      name: Review Input Validation
+      message: Validate input sanitization is in place
+      ui_description: Check that all user inputs are properly validated and sanitized
+      automated: false
+
+  detection_analysis:
+    - action: analyze_injection_payload
+      name: Analyze Injection Payload
+      message: Extract and analyze the malicious payload
+      ui_description: Identify the injection type (SQL, XSS, command, etc.)
+      automated: true
+      params:
+        log_sources: ["waf", "application", "database"]
+
+    - action: identify_vulnerable_endpoint
+      name: Identify Vulnerable Endpoint
+      message: Locate the vulnerable input point
+      ui_description: Determine which endpoint or parameter is exploitable
+      automated: false
+
+    - action: assess_injection_impact
+      name: Assess Injection Impact
+      message: Evaluate what was accessed or executed
+      ui_description: Determine if data was exfiltrated or commands were executed
+      automated: false
+
+  containment:
+    - action: enable_waf_rule
+      name: Enable WAF Rule
+      message: Activate WAF rule to block injection pattern
+      ui_description: Deploy signature to block the specific attack pattern
+      automated: true
+      params:
+        rule_id: "injection_block"
+        pattern_type: "auto_detect"
+
+    - action: block_attacker_ip
+      name: Block Attacker IP
+      message: Block source IP addresses of attack
+      ui_description: Add attacker IPs to firewall blocklist
+      automated: true
+      params:
+        duration: "permanent"
+
+    - action: disable_vulnerable_endpoint
+      name: Disable Vulnerable Endpoint
+      message: Temporarily disable the vulnerable functionality
+      ui_description: Take vulnerable endpoint offline until patched
+      automated: false
+
+  eradication:
+    - action: patch_injection_vulnerability
+      name: Patch Injection Vulnerability
+      message: Deploy fix for injection flaw
+      ui_description: Implement parameterized queries, input validation, or encoding
+      automated: false
+
+    - action: sanitize_affected_data
+      name: Sanitize Affected Data
+      message: Clean any injected malicious content
+      ui_description: Remove malicious scripts or data from database/storage
+      automated: false
+
+    - action: update_waf_rules
+      name: Update WAF Rules
+      message: Enhance WAF with broader injection detection
+      ui_description: Deploy comprehensive rules to catch injection variants
+      automated: true
+      params:
+        rule_set: "owasp_core_ruleset"
+
+  recovery:
+    - action: restore_service
+      name: Restore Service
+      message: Re-enable patched endpoint
+      ui_description: Bring vulnerable functionality back online with fixes applied
+      automated: false
+
+    - action: validate_injection_fix
+      name: Validate Injection Fix
+      message: Confirm injection vulnerability is resolved
+      ui_description: Test that injection attacks are now properly blocked
+      automated: false
+
+    - action: monitor_for_variants
+      name: Monitor for Attack Variants
+      message: Watch for alternative injection techniques
+      ui_description: Enhanced monitoring for similar attack patterns
+      automated: true
+      params:
+        monitoring_duration_hours: 72
+
+  post_incident:
+    - action: document_injection_incident
+      name: Document Injection Incident
+      message: Create comprehensive incident report
+      ui_description: Record attack details, impact, and remediation
+      automated: false
+
+    - action: conduct_code_review
+      name: Conduct Security Code Review
+      message: Review codebase for similar injection flaws
+      ui_description: Scan for other potential injection vulnerabilities
+      automated: false
+
+    - action: update_secure_coding_training
+      name: Update Secure Coding Training
+      message: Train developers on injection prevention
+      ui_description: Ensure team understands parameterized queries and input validation
+      automated: false

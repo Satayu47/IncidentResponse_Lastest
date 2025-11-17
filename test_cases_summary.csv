@@ -1,0 +1,73 @@
+case_id,expected_label,full_text,num_turns
+BAC-01,broken_access_control,Normal staff can access the /admin dashboard. They don't even have admin role but they can still see all reports.,2
+BAC-02,broken_access_control,Customer A can see the invoice of customer B. Just by changing the invoice ID in the URL.,2
+BAC-03,broken_access_control,"Viewer role can delete records. They should only be able to read, not modify anything.",2
+BAC-04,broken_access_control,User can read another user's profile. Just by guessing the user ID they get the whole profile data.,2
+BAC-05,broken_access_control,If I change ?userId=10 to 11 I can see another account's data. There is no permission check.,2
+BAC-06,broken_access_control,Mobile app lets me access other tenant's data. API does not filter by tenant ID.,2
+BAC-07,broken_access_control,Helpdesk user can escalate themselves to admin via an API call. That's not supposed to happen.,2
+BAC-08,broken_access_control,Soft-deleted records can still be accessed via direct URL. The backend does not check if it's deleted.,2
+BAC-09,broken_access_control,Tenant isolation is broken. Company A can see Company B's project list.,2
+BAC-10,broken_access_control,Unauthenticated user can call /export-all-users. They can dump all user accounts without login.,2
+BAC-11,broken_access_control,Intern role can approve financial transactions. They should not have approval permissions.,2
+BAC-12,broken_access_control,User can access /admin/logs without being logged in. This endpoint is unprotected.,2
+INJ-01,injection,Login works with weird payload. When I type ' OR 1=1 -- the login bypasses authentication.,2
+INJ-02,injection,Search bar shows weird symbols. SQL error appears in response when using %$#@.,2
+INJ-03,injection,Attacker sent id=1; DROP TABLE users; This caused table deletion.,2
+INJ-04,injection,Logs show syntax error near 'OR'. Attacker keeps sending strange SQL payloads.,2
+INJ-05,injection,Comment form allows <script>alert(1)</script>. Other users see the popup.,2
+INJ-06,injection,We found UNION SELECT payloads in logs. Looks like SQL injection.,2
+INJ-07,injection,API filter parameter accepts OR 1=1. It reveals data that shouldn't be visible.,2
+INJ-08,injection,Password reset parameter can inject SQL. User added ' OR ''=' in the link.,2
+INJ-09,injection,Search page reflects HTML without escaping. User injected raw HTML tags.,2
+INJ-10,injection,Backend executes OS commands from user input. Saw ; rm -rf / in the logs.,2
+INJ-11,injection,Attacker sent malicious serialized Java object. Possible remote code execution.,2
+INJ-12,injection,Login page throws DB error. Payload was '/**/OR/**/1=1'.,2
+AUTH-01,broken_authentication,Any 6 digit code is accepted as OTP. Even random numbers work.,2
+AUTH-02,broken_authentication,Session never expires. User stays logged in for days even without activity.,2
+AUTH-03,broken_authentication,User stays logged in even after password reset. Session is not invalidated.,2
+AUTH-04,broken_authentication,JWT tokens never expire. They have no exp claim.,2
+AUTH-05,broken_authentication,Passwords stored in plaintext in DB. No hashing at all.,2
+AUTH-06,broken_authentication,Login doesn't lock after hundreds of failed attempts. Brute force seems possible.,2
+AUTH-07,broken_authentication,User can reuse previous password. Old revoked passwords accepted.,2
+AUTH-08,broken_authentication,Remember-me cookie works on every device. It is not device-bound.,2
+AUTH-09,broken_authentication,Reset password link has no expiration. Anyone with link can reset any time.,2
+AUTH-10,broken_authentication,2FA is optional for admin accounts. Admins can skip MFA entirely.,2
+AUTH-11,broken_authentication,Same session ID before and after login. Session fixation possible.,2
+AUTH-12,broken_authentication,System uses md5 without salt for passwords. Very weak password storage.,2
+SDE-01,sensitive_data_exposure,"Credit card numbers appear in access logs. Full PAN, not masked.",2
+SDE-02,sensitive_data_exposure,Customer SSNs accidentally exposed. They were in a CSV we emailed.,2
+SDE-03,sensitive_data_exposure,DB backup with PII left in public S3 bucket. Anyone could download it.,2
+SDE-04,sensitive_data_exposure,Export API returns full card numbers. No masking applied.,2
+SDE-05,sensitive_data_exposure,HR staff can download everyone's salary. No restrictions.,2
+SDE-06,sensitive_data_exposure,Error page prints full stack trace including secrets. This reveals environment vars.,2
+SDE-07,sensitive_data_exposure,Logs include Authorization headers. Bearer tokens visible.,2
+SDE-08,sensitive_data_exposure,National ID returned fully in frontend response. Should be masked.,2
+CRY-01,cryptographic_failures,"Login page is HTTP, not HTTPS. Credentials sent in plain text.",2
+CRY-02,cryptographic_failures,TLS certificate expired 3 months ago. Browser warning appears.,2
+CRY-03,cryptographic_failures,Browser shows NOT SECURE on login page. TLS misconfigured.,2
+CRY-04,cryptographic_failures,We use self-signed certificate in production. Users see warnings.,2
+CRY-05,cryptographic_failures,Server still supports TLS 1.0. Weak cipher suites.,2
+CRY-06,cryptographic_failures,Hard-coded AES key '123456' in source code. Extremely weak encryption.,2
+CRY-07,cryptographic_failures,Tokens hashed using md5 without salt. Not secure.,2
+CRY-08,cryptographic_failures,TLS was disabled after update. Everything sent over HTTP.,2
+MIS-01,security_misconfiguration,"Admin panel still uses default credentials. Username: admin, password: admin.",2
+MIS-02,security_misconfiguration,Directory listing enabled on production. Users can browse source files.,2
+MIS-03,security_misconfiguration,Debug mode enabled in production. Shows stack traces to public.,2
+MIS-04,security_misconfiguration,Kibana is exposed to the internet. No authentication required.,2
+MIS-05,security_misconfiguration,Test endpoints still active in production. /test/debug-health.,2
+MIS-06,security_misconfiguration,Firewall allows SSH from anywhere. 0.0.0.0/0 allowed.,2
+MIS-07,security_misconfiguration,S3 bucket is public read/write. Anyone can upload or delete.,2
+MIS-08,security_misconfiguration,WAF disabled after deployment. Forgot to turn back on.,2
+MIS-09,security_misconfiguration,CORS set to * for everything. Very risky.,2
+MIS-10,security_misconfiguration,Stack trace shows to all users. Happens on every error.,2
+MIS-11,security_misconfiguration,Monitoring dashboard public. No login required.,2
+MIS-12,security_misconfiguration,Default accounts still active. guest/guest still works.,2
+OTH-01,other,"Website is super slow. No logs, no suspicious activity.",2
+OTH-02,other,UI looks bad. User wants nicer colors.,2
+OTH-03,other,User forgot password. No security incident.,2
+OTH-04,other,Boss says we are hacked. But no logs or evidence.,2
+OTH-05,other,User spamming emojis in support chat. Annoying but not security.,2
+OTH-06,other,User mistyped email. No deeper issue.,2
+OTH-07,other,We changed domain; users are confused. Just usability issue.,2
+OTH-08,other,Customer angry about pricing. Not a cyber issue.,2

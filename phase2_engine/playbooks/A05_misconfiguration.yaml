@@ -1,0 +1,129 @@
+# A05: Security Misconfiguration Playbook
+id: A05_misconfiguration
+name: Security Misconfiguration Response
+description: >
+  Response playbook for security misconfigurations including default credentials,
+  unnecessary services, directory listing, and insecure configurations.
+severity: medium
+category: misconfiguration
+
+phases:
+  preparation:
+    - action: establish_secure_baseline
+      name: Establish Secure Baseline
+      message: Define and document secure configuration standards
+      ui_description: Create hardened configuration baselines for all systems
+      automated: false
+
+    - action: inventory_system_configurations
+      name: Inventory System Configurations
+      message: Maintain catalog of all system configurations
+      ui_description: Track configuration state of all production systems
+      automated: false
+
+  detection_analysis:
+    - action: identify_misconfiguration
+      name: Identify Misconfiguration
+      message: Determine the specific misconfiguration
+      ui_description: Identify what security setting was improperly configured
+      automated: false
+
+    - action: assess_exposure_risk
+      name: Assess Exposure Risk
+      message: Evaluate risk from the misconfiguration
+      ui_description: Determine what attack surface was exposed
+      automated: false
+
+    - action: scan_for_similar_issues
+      name: Scan for Similar Issues
+      message: Check for related misconfigurations
+      ui_description: Scan infrastructure for similar configuration weaknesses
+      automated: true
+      params:
+        scan_scope: "all_systems"
+
+  containment:
+    - action: apply_secure_configuration
+      name: Apply Secure Configuration
+      message: Immediately apply secure settings
+      ui_description: Fix the misconfiguration with hardened settings
+      automated: true
+      params:
+        config_type: "auto_detect"
+
+    - action: disable_unnecessary_services
+      name: Disable Unnecessary Services
+      message: Turn off unneeded services and features
+      ui_description: Remove attack surface by disabling unused functionality
+      automated: true
+      params:
+        service_types: ["debug", "admin_panels", "directory_listing"]
+
+    - action: change_default_credentials
+      name: Change Default Credentials
+      message: Replace any default or weak credentials
+      ui_description: Force password changes for accounts with default credentials
+      automated: true
+      params:
+        force_reset: true
+
+  eradication:
+    - action: harden_system_configuration
+      name: Harden System Configuration
+      message: Apply comprehensive hardening
+      ui_description: Implement full security hardening per baseline
+      automated: false
+
+    - action: remove_sensitive_exposure
+      name: Remove Sensitive Information Exposure
+      message: Eliminate verbose error messages and debug info
+      ui_description: Ensure no sensitive information is leaked in responses
+      automated: false
+
+    - action: implement_security_headers
+      name: Implement Security Headers
+      message: Deploy proper HTTP security headers
+      ui_description: Add headers like CSP, HSTS, X-Frame-Options
+      automated: true
+      params:
+        headers: ["csp", "hsts", "x_frame_options", "x_content_type_options"]
+
+  recovery:
+    - action: validate_configuration
+      name: Validate Configuration
+      message: Confirm secure configuration is applied
+      ui_description: Test that hardened settings are properly enforced
+      automated: false
+
+    - action: restore_normal_operations
+      name: Restore Normal Operations
+      message: Return systems to production state
+      ui_description: Ensure services are fully functional with secure configs
+      automated: false
+
+    - action: monitor_configuration_drift
+      name: Monitor Configuration Drift
+      message: Watch for unauthorized configuration changes
+      ui_description: Alert on any deviations from secure baseline
+      automated: true
+      params:
+        monitoring_duration_days: 30
+
+  post_incident:
+    - action: document_misconfiguration_incident
+      name: Document Misconfiguration
+      message: Create incident documentation
+      ui_description: Record what was misconfigured and how it was discovered
+      automated: false
+
+    - action: conduct_configuration_audit
+      name: Conduct Configuration Audit
+      message: Audit all system configurations
+      ui_description: Review configurations across entire infrastructure
+      automated: false
+
+    - action: automate_configuration_management
+      name: Automate Configuration Management
+      message: Implement automated configuration enforcement
+      ui_description: Use IaC and config management tools to prevent drift
+      automated: false

@@ -1,0 +1,85 @@
+# A04: Insecure Design Playbook
+id: A04_insecure_design
+name: Insecure Design Response
+description: >
+  Response playbook for insecure design flaws including missing security controls,
+  weak business logic, and architectural vulnerabilities.
+severity: medium
+category: insecure_design
+
+phases:
+  preparation:
+    - action: establish_threat_modeling
+      name: Establish Threat Modeling
+      message: Implement threat modeling in design phase
+      ui_description: Ensure security is considered during design and architecture
+      automated: false
+
+  detection_analysis:
+    - action: identify_design_flaw
+      name: Identify Design Flaw
+      message: Analyze the architectural weakness
+      ui_description: Determine what security control is missing or inadequate
+      automated: false
+
+    - action: assess_business_impact
+      name: Assess Business Impact
+      message: Evaluate impact on business logic
+      ui_description: Understand how flaw affects business operations and data
+      automated: false
+
+  containment:
+    - action: implement_compensating_control
+      name: Implement Compensating Control
+      message: Deploy temporary workaround
+      ui_description: Add interim security control to mitigate risk
+      automated: false
+
+    - action: enable_rate_limiting
+      name: Enable Rate Limiting
+      message: Add rate limiting where missing
+      ui_description: Prevent abuse through request throttling
+      automated: true
+      params:
+        requests_per_minute: 60
+
+  eradication:
+    - action: redesign_security_architecture
+      name: Redesign Security Architecture
+      message: Fix architectural flaw
+      ui_description: Implement proper security design patterns
+      automated: false
+
+    - action: add_security_controls
+      name: Add Security Controls
+      message: Implement missing security mechanisms
+      ui_description: Deploy proper authentication, authorization, or validation
+      automated: false
+
+  recovery:
+    - action: validate_design_fix
+      name: Validate Design Fix
+      message: Confirm architectural improvement
+      ui_description: Test that design flaw is resolved
+      automated: false
+
+    - action: monitor_for_abuse
+      name: Monitor for Abuse
+      message: Watch for exploitation attempts
+      ui_description: Monitor for attempts to exploit design weakness
+      automated: true
+      params:
+        monitoring_duration_days: 30
+
+  post_incident:
+    - action: document_design_incident
+      name: Document Design Incident
+      message: Record architectural flaw details
+      ui_description: Document design weakness and remediation
+      automated: false
+
+    - action: update_design_standards
+      name: Update Design Standards
+      message: Enhance secure design guidelines
+      ui_description: Incorporate lessons into architecture standards
+      automated: false
