@@ -23,6 +23,10 @@ from src import (
 # Phase-2 import
 from phase2_engine.core.runner_bridge import run_phase2_from_incident
 
+# Execution and CVE imports
+from src.execution_simulator import ExecutionSimulator
+from src.cve_service import CVEService
+
 # Load environment variables
 load_dotenv()
 
@@ -57,6 +61,15 @@ if "explicit_detector" not in st.session_state:
 if "kb_retriever" not in st.session_state:
     st.session_state.kb_retriever = KnowledgeBaseRetriever()
 
+if "execution_simulator" not in st.session_state:
+    st.session_state.execution_simulator = ExecutionSimulator()
+
+if "cve_service" not in st.session_state:
+    st.session_state.cve_service = CVEService()
+
+if "enable_execution" not in st.session_state:
+    st.session_state.enable_execution = False
+
 
 # ============================================
 # Sidebar
@@ -75,10 +88,20 @@ with st.sidebar:
     
     st.markdown("---")
     
+    # Execution simulation toggle
+    st.session_state.enable_execution = st.checkbox(
+        "🚀 Enable Execution Simulation",
+        value=st.session_state.enable_execution,
+        help="Simulate execution of response actions (safe demo mode)"
+    )
+    
+    st.markdown("---")
+    
     # Reset button only
     if st.button("🔄 Reset Conversation", use_container_width=True):
         st.session_state.dialogue_ctx.reset()
         st.session_state.phase1_output = None
+        st.session_state.execution_simulator.clear_log()
         st.rerun()
     
     st.markdown("---")
@@ -251,6 +274,37 @@ if st.session_state.get("phase1_output"):
             for ex in owasp_details["examples"]:
                 st.write(f"- {ex}")
     
+    # CVE Lookup
+    st.markdown("---")
+    st.subheader("🔍 Related Vulnerabilities")
+    
+    with st.spinner("Searching CVE database..."):
+        # Extract keywords for CVE search
+        search_term = owasp_name.lower()
+        if "injection" in search_term:
+            search_term = "sql injection"
+        elif "xss" in search_term or "cross" in search_term:
+            search_term = "xss"
+        elif "authentication" in search_term:
+            search_term = "authentication bypass"
+        
+        cve_results = st.session_state.cve_service.search_vulnerabilities(search_term, max_results=3)
+        
+        if cve_results:
+            for cve in cve_results:
+                severity_color = {
+                    "CRITICAL": "🔴",
+                    "HIGH": "🟠",
+                    "MEDIUM": "🟡",
+                    "LOW": "🟢"
+                }.get(cve["severity"], "⚪")
+                
+                with st.expander(f"{severity_color} {cve['cve_id']} - {cve['severity']} (CVSS: {cve['cvss_score']})"):
+                    st.write(cve["description"])
+                    st.caption(f"Published: {cve['published']} | Modified: {cve['modified']}")
+        else:
+            st.info("No related CVEs found in database.")
+    
     # ============================================
     # Phase-2: Automated Response Plan
     # ============================================
@@ -309,6 +363,61 @@ if st.session_state.get("phase1_output"):
                     
                     # Explain simulation mode
                     st.caption("ℹ️ **Note:** This plan is generated in simulation mode. No real actions are executed on your systems.")
+                    
+                    # Execution Simulation
+                    if st.session_state.enable_execution:
+                        st.markdown("---")
+                        st.subheader("🚀 Executing Response Actions")
+                        
+                        # Convert phase2 steps to executable format
+                        executable_steps = []
+                        for step in phase2_result["steps"]:
+                            executable_steps.append({
+                                "action": step.get("name", "Unknown Action"),
+                                "description": step.get("ui_description", step.get("message", ""))
+                            })
+                        
+                        # Progress tracking
+                        progress_bar = st.progress(0)
+                        status_text = st.empty()
+                        
+                        def update_progress(current, total, action_name):
+                            progress = current / total
+                            progress_bar.progress(progress)
+                            status_text.text(f"Executing step {current}/{total}: {action_name}")
+                        
+                        # Execute with simulation
+                        execution_results = st.session_state.execution_simulator.execute_playbook(
+                            executable_steps,
+                            progress_callback=update_progress
+                        )
+                        
+                        # Clear progress indicators
+                        progress_bar.empty()
+                        status_text.empty()
+                        
+                        # Display execution results
+                        st.success(f"✅ Executed {len(execution_results)} actions successfully!")
+                        
+                        with st.expander("📋 View Execution Log", expanded=True):
+                            for idx, result in enumerate(execution_results, 1):
+                                col1, col2 = st.columns([1, 11])
+                                
+                                with col1:
+                                    if result["status"] == "success":
+                                        st.markdown("✅")
+                                    else:
+                                        st.markdown("❌")
+                                
+                                with col2:
+                                    st.markdown(f"**{result['step']}**")
+                                    st.caption(result["message"])
+                                    if result.get("details"):
+                                        st.caption(f"Details: {result['details']}")
+                                    st.caption(f"⏱️ {result['execution_time']:.2f}s")
+                                
+                                if idx < len(execution_results):
+                                    st.markdown("---")
                     
                     # Group steps by phase
                     steps_by_phase = {}
