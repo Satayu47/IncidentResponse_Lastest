@@ -50,35 +50,45 @@ def main():
             out = run_phase1_classification(text)
             got = out["label"]
             score = out.get("score", 0.0)
-            ok = (got == expected)
+            
+            # Handle multi-label cases
+            if isinstance(expected, list):
+                expected_str = " or ".join(expected)
+                ok = got in expected
+                primary_expected = expected[0]
+            else:
+                expected_str = expected
+                ok = (got == expected)
+                primary_expected = expected
             
             status = "✅" if ok else "❌"
-            print(f"{status} {case_id:10s} | Expected: {expected:25s} | Got: {got:25s} | Score: {score:.2f}")
+            print(f"{status} {case_id:10s} | Expected: {expected_str:30s} | Got: {got:25s} | Score: {score:.2f}")
             
             results.append({
                 "case_id": case_id,
-                "expected": expected,
+                "expected": expected_str,
                 "got": got,
                 "score": score,
                 "correct": int(ok),
                 "text": text[:100] + "..." if len(text) > 100 else text,
             })
 
-            category_totals[expected] += 1
+            category_totals[primary_expected] += 1
             if ok:
-                category_correct[expected] += 1
+                category_correct[primary_expected] += 1
                 
         except Exception as e:
             print(f"❌ {case_id:10s} | ERROR: {str(e)[:50]}")
+            primary_expected = expected[0] if isinstance(expected, list) else expected
             results.append({
                 "case_id": case_id,
-                "expected": expected,
+                "expected": str(expected),
                 "got": "ERROR",
                 "score": 0.0,
                 "correct": 0,
                 "text": text[:100],
             })
-            category_totals[expected] += 1
+            category_totals[primary_expected] += 1
 
     # Calculate overall accuracy
     total = len(results)

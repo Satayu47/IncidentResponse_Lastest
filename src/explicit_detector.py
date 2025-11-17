@@ -13,9 +13,9 @@ class ExplicitDetector:
     """Fast keyword-based detection for obvious security patterns."""
     
     def __init__(self):
-        # Patterns: (regex, label, confidence)
-        # Organized by category with human-style phrases from test cases
-        # IMPORTANT: Order matters - more specific patterns first!
+        # regex patterns for quick detection
+        # tried to order by specificity but might need adjustment
+        # confidence scores based on testing - some patterns more reliable than others
         self.patterns = [
             
             # ===== OTHER / NON-SECURITY (check first to avoid false positives) =====

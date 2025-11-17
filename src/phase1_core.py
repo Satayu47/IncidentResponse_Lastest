@@ -55,12 +55,12 @@ def run_phase1_classification(user_text: str) -> Dict:
             "candidates": []
         }
 
-    # 1) Try explicit keyword detection first (fast path)
+    # Try keyword detection first - saves API calls
     detector = ExplicitDetector()
     explicit_label, explicit_conf = detector.detect(user_text)
     
     if explicit_label and explicit_conf >= 0.85:
-        # High-confidence explicit match - use it directly
+        # pretty confident, just use this
         canonical = canonicalize_label(explicit_label)
         return {
             "label": canonical,

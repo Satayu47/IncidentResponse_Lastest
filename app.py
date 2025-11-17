@@ -1,8 +1,6 @@
-"""
-Incident Response Platform - Combined Phase-1 + Phase-2
-Phase-1: LLM-based classification with ChatOps interface
-Phase-2: DAG-based playbook execution and automation
-"""
+# Incident Response Platform
+# Main Streamlit app - combines classification (Phase-1) and playbook execution (Phase-2)
+# Started with OpenAI but switched to Gemini for better results
 
 import streamlit as st
 import time

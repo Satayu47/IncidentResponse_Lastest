@@ -8,9 +8,10 @@ import re
 from typing import Dict, Tuple
 
 
-# ============================================================================
-# CANONICAL LABEL MAPPING - Fixes LLM synonym variations
-# ============================================================================
+# Canonical label mapping
+# This fixes the issue where Gemini returns different variations
+# like "identification_and_authentication_failures" vs "broken_authentication"
+# Took a while to figure out all the variations!
 
 _CANON_MAP = {
     # Broken Access Control
