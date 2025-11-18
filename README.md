@@ -11,43 +11,51 @@ After testing on 50 challenging security incident cases, the system achieved:
 
 The system supports multiple LLM providers (Gemini, OpenAI, Claude) for baseline comparisons.
 
-## Project Structure
+## 📁 Project Structure
+
+**Clean and organized!** See `PROJECT_STRUCTURE.md` for details.
 
 ```
 incidentResponse_Combine/
-├── app.py                      # Main Streamlit web application
+├── app.py                      # Main Streamlit application
 ├── requirements.txt            # Python dependencies
 ├── setup.ps1                   # Quick setup script
-├── test_cases.py               # Test case definitions
+├── README.md                   # This file
+├── START_HERE.md               # Quick start guide
+├── PROJECT_STRUCTURE.md        # Complete structure guide
 │
 ├── src/                        # Core source code
 │   ├── phase1_core.py         # Classification pipeline
-│   ├── llm_adapter.py         # Multi-LLM integration (Gemini, OpenAI, Claude)
-│   ├── explicit_detector.py   # Regex pattern detection (100+ patterns)
-│   ├── classification_rules.py # Canonical label mapping (90+ variations)
-│   └── baseline_keyword_classifier.py # Baseline classifier
+│   ├── llm_adapter.py         # LLM integration (Gemini)
+│   ├── explicit_detector.py   # Pattern detection (100+ patterns)
+│   ├── classification_rules.py # Label normalization
+│   ├── classification_validator.py # Safety validation
+│   └── ...
 │
 ├── phase2_engine/             # Playbook execution engine
 │   ├── core/                  # Core execution logic
-│   └── playbooks/             # OWASP category playbooks (YAML)
+│   ├── playbooks/             # OWASP 2025 playbooks (YAML)
+│   └── policies/              # OPA policy files
 │
 ├── tests/                     # Test suite
-│   ├── accuracy/              # Accuracy test cases
-│   └── test_*.py              # Various test files
+│   └── test_*.py              # Test files
 │
 ├── scripts/                   # Utility scripts
-│   ├── experiments/           # Experiment scripts
-│   ├── visualization/         # Chart generation
-│   ├── testing/               # Test utilities
-│   └── setup/                 # Setup helpers
+│   ├── test_presentation_owasp_1_4_5_7.py  # Presentation test
+│   └── ...
 │
-├── docs/                      # Documentation
-│   ├── guides/                # User guides
-│   ├── architecture/          # Architecture docs
-│   ├── experiments/           # Experiment docs
-│   └── README.md              # Documentation index
+├── docs/                      # Documentation (organized)
+│   ├── presentation/         # Presentation materials
+│   ├── thresholds/           # Threshold documentation
+│   ├── setup/                # Setup guides
+│   ├── status/               # Project status
+│   ├── experiments/          # Experiment docs
+│   ├── HOW_IT_WORKS.md       # Main documentation
+│   └── ...
 │
 └── reports/                   # Test results & reports
+    ├── visualizations/       # Charts and graphs
+    └── data/                 # Test data
     ├── papers/                # Paper-ready reports (IEEE format)
     ├── visualizations/         # Charts and images
     ├── results/               # JSON test results
