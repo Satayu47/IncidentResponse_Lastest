@@ -1,0 +1,836 @@
+{
+  "timestamp": "2025-11-18T15:44:58.189172",
+  "test_cases_count": 50,
+  "gemini": {
+    "model": "gemini-2.5-pro",
+    "provider": "gemini",
+    "status": "success",
+    "results": [
+      {
+        "test_id": "BAC-01",
+        "user_input": "I changed the number in the URL and saw someone else's profile. Is that normal?",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.37
+      },
+      {
+        "test_id": "BAC-02",
+        "user_input": "My friend logged into my account using their own password. That shouldn't work right?",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.15
+      },
+      {
+        "test_id": "BAC-03",
+        "user_input": "I can see all customer orders even though I'm just a regular employee.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "BAC-04",
+        "user_input": "When I delete my account, I can still access it by direct link.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "BAC-05",
+        "user_input": "I'm a viewer but I can approve transactions somehow.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "BAC-06",
+        "user_input": "I can access the admin panel even though I'm not an admin. I just typed /admin in the URL.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.14
+      },
+      {
+        "test_id": "BAC-07",
+        "user_input": "When I click on a link from my email, I can see other people's private messages.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.08
+      },
+      {
+        "test_id": "BAC-08",
+        "user_input": "I can edit other users' posts by changing the post ID in the URL.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.13
+      },
+      {
+        "test_id": "BAC-09",
+        "user_input": "As a customer, I can see invoices from other companies by changing the company ID.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.08
+      },
+      {
+        "test_id": "BAC-10",
+        "user_input": "I can download files that belong to other users. I just need to know the file ID.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.12
+      },
+      {
+        "test_id": "CRY-01",
+        "user_input": "Our passwords are stored in plain text in the database. Is that bad?",
+        "expected": "cryptographic_failures",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "CRY-02",
+        "user_input": "I found credit card numbers in the logs without any encryption.",
+        "expected": "cryptographic_failures",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "CRY-03",
+        "user_input": "The website doesn't use HTTPS. Users are sending passwords over HTTP.",
+        "expected": "cryptographic_failures",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.12
+      },
+      {
+        "test_id": "CRY-04",
+        "user_input": "I can see user data when I look at the network traffic. It's not encrypted.",
+        "expected": "cryptographic_failures",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "CRY-05",
+        "user_input": "Our API returns user emails and phone numbers without any protection.",
+        "expected": "cryptographic_failures",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "CRY-06",
+        "user_input": "The system stores social security numbers in plain text. I can see them in the database.",
+        "expected": "cryptographic_failures",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "CRY-07",
+        "user_input": "When I check the API response, I can see passwords in the JSON. They're not hashed or anything.",
+        "expected": "cryptographic_failures",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "CRY-08",
+        "user_input": "Our backup files contain unencrypted customer data. Anyone with access to the backup can read everything.",
+        "expected": "cryptographic_failures",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "CRY-09",
+        "user_input": "The mobile app sends user location data over HTTP instead of HTTPS.",
+        "expected": "cryptographic_failures",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "CRY-10",
+        "user_input": "I found medical records in the database that are stored without encryption. This seems wrong.",
+        "expected": "cryptographic_failures",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "INJ-01",
+        "user_input": "Weird syntax appear on login page. Looks like code but I'm not sure.",
+        "expected": "injection",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.32
+      },
+      {
+        "test_id": "INJ-02",
+        "user_input": "My table disappeared from the database. Could someone have deleted it?",
+        "expected": "injection",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.07
+      },
+      {
+        "test_id": "INJ-03",
+        "user_input": "When I type special characters in the search box, the page breaks.",
+        "expected": "injection",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.05
+      },
+      {
+        "test_id": "INJ-04",
+        "user_input": "I saw error messages that show database structure. Is that dangerous?",
+        "expected": "injection",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.05
+      },
+      {
+        "test_id": "INJ-05",
+        "user_input": "Someone entered JavaScript code in a comment and it executed on other users' browsers.",
+        "expected": "injection",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.06
+      },
+      {
+        "test_id": "INJ-06",
+        "user_input": "The login form accepts strange characters and then the database shows errors.",
+        "expected": "injection",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "INJ-07",
+        "user_input": "I'm worried! The website is showing database errors when I search for things.",
+        "expected": "injection",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "INJ-08",
+        "user_input": "When I paste code snippets into the contact form, they appear on other users' screens as actual code.",
+        "expected": "injection",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "INJ-09",
+        "user_input": "The system crashed after someone entered a weird command in the file upload field.",
+        "expected": "injection",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "INJ-10",
+        "user_input": "I noticed that when users type certain characters in the search, the page shows SQL errors with table names.",
+        "expected": "injection",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "AUTH-01",
+        "user_input": "I can log in with password '12345'. That seems too easy.",
+        "expected": "broken_authentication",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "AUTH-02",
+        "user_input": "My session never expires. I logged in last week and I'm still logged in.",
+        "expected": "broken_authentication",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "AUTH-03",
+        "user_input": "I tried wrong passwords many times but the system didn't lock me out.",
+        "expected": "broken_authentication",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "AUTH-04",
+        "user_input": "I forgot my password but I can still access my account somehow.",
+        "expected": "broken_authentication",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "AUTH-05",
+        "user_input": "The system doesn't require two-factor authentication for admin accounts.",
+        "expected": "broken_authentication",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "AUTH-06",
+        "user_input": "I logged out but when I go back to the site, I'm still logged in.",
+        "expected": "broken_authentication",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "AUTH-07",
+        "user_input": "Users can set their password to anything, even just one character.",
+        "expected": "broken_authentication",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.12
+      },
+      {
+        "test_id": "AUTH-08",
+        "user_input": "The system allows me to use my username as my password. That can't be secure.",
+        "expected": "broken_authentication",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "AUTH-09",
+        "user_input": "I can reset anyone's password if I know their email address. There's no verification.",
+        "expected": "broken_authentication",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.06
+      },
+      {
+        "test_id": "AUTH-10",
+        "user_input": "The system shows me if a username exists or not when I try to log in. That seems like it helps attackers.",
+        "expected": "broken_authentication",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "AMBIG-01",
+        "user_input": "The website crashed after someone entered weird text. Now it shows database errors.",
+        "expected": "injection",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "AMBIG-02",
+        "user_input": "I can see other people's data when I shouldn't be able to. The URL changes when I click around.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "AMBIG-03",
+        "user_input": "I found user information in log files. It includes passwords and credit cards.",
+        "expected": "cryptographic_failures",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.15
+      },
+      {
+        "test_id": "AMBIG-04",
+        "user_input": "Users can set their password to anything, even just one character.",
+        "expected": "broken_authentication",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "AMBIG-05",
+        "user_input": "I can access admin functions by changing my role in the cookie. The system doesn't check if I'm really an admin.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "AMBIG-06",
+        "user_input": "When I enter HTML tags in my profile, they show up as actual HTML on other users' pages.",
+        "expected": "injection",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "AMBIG-07",
+        "user_input": "The API endpoint returns sensitive data without checking if I'm authorized, and it's all in plain text.",
+        "expected": "cryptographic_failures",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.12
+      },
+      {
+        "test_id": "AMBIG-08",
+        "user_input": "I can bypass the login by manipulating the session token. The system doesn't verify it properly.",
+        "expected": "broken_authentication",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      },
+      {
+        "test_id": "AMBIG-09",
+        "user_input": "The search function breaks when I enter database commands. It shows me table names and column structures.",
+        "expected": "injection",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "AMBIG-10",
+        "user_input": "I can see deleted posts by changing the status parameter. They're marked as deleted but I can still view them.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.1
+      }
+    ],
+    "accuracy": 0.0,
+    "correct": 0,
+    "total_tests": 50,
+    "avg_time": 0.11,
+    "total_time": 5.66
+  },
+  "openai": {
+    "model": "gpt-4o",
+    "provider": "openai",
+    "status": "success",
+    "results": [
+      {
+        "test_id": "BAC-01",
+        "user_input": "I changed the number in the URL and saw someone else's profile. Is that normal?",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.71
+      },
+      {
+        "test_id": "BAC-02",
+        "user_input": "My friend logged into my account using their own password. That shouldn't work right?",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.39
+      },
+      {
+        "test_id": "BAC-03",
+        "user_input": "I can see all customer orders even though I'm just a regular employee.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.31
+      },
+      {
+        "test_id": "BAC-04",
+        "user_input": "When I delete my account, I can still access it by direct link.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.31
+      },
+      {
+        "test_id": "BAC-05",
+        "user_input": "I'm a viewer but I can approve transactions somehow.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.54
+      },
+      {
+        "test_id": "BAC-06",
+        "user_input": "I can access the admin panel even though I'm not an admin. I just typed /admin in the URL.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.38
+      },
+      {
+        "test_id": "BAC-07",
+        "user_input": "When I click on a link from my email, I can see other people's private messages.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.31
+      },
+      {
+        "test_id": "BAC-08",
+        "user_input": "I can edit other users' posts by changing the post ID in the URL.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.37
+      },
+      {
+        "test_id": "BAC-09",
+        "user_input": "As a customer, I can see invoices from other companies by changing the company ID.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "BAC-10",
+        "user_input": "I can download files that belong to other users. I just need to know the file ID.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}",
+        "correct": false,
+        "elapsed_time": 0.36
+      },
+      {
+        "test_id": "CRY-01",
+        "user_input": "Our passwords are stored in plain text in the database. Is that bad?",
+        "expected": "cryptographic_failures",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.33
+      },
+      {
+        "test_id": "CRY-02",
+        "user_input": "I found credit card numbers in the logs without any encryption.",
+        "expected": "cryptographic_failures",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "CRY-03",
+        "user_input": "The website doesn't use HTTPS. Users are sending passwords over HTTP.",
+        "expected": "cryptographic_failures",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "CRY-04",
+        "user_input": "I can see user data when I look at the network traffic. It's not encrypted.",
+        "expected": "cryptographic_failures",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.3
+      },
+      {
+        "test_id": "CRY-05",
+        "user_input": "Our API returns user emails and phone numbers without any protection.",
+        "expected": "cryptographic_failures",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.34
+      },
+      {
+        "test_id": "CRY-06",
+        "user_input": "The system stores social security numbers in plain text. I can see them in the database.",
+        "expected": "cryptographic_failures",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.3
+      },
+      {
+        "test_id": "CRY-07",
+        "user_input": "When I check the API response, I can see passwords in the JSON. They're not hashed or anything.",
+        "expected": "cryptographic_failures",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "CRY-08",
+        "user_input": "Our backup files contain unencrypted customer data. Anyone with access to the backup can read everything.",
+        "expected": "cryptographic_failures",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "CRY-09",
+        "user_input": "The mobile app sends user location data over HTTP instead of HTTPS.",
+        "expected": "cryptographic_failures",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.34
+      },
+      {
+        "test_id": "CRY-10",
+        "user_input": "I found medical records in the database that are stored without encryption. This seems wrong.",
+        "expected": "cryptographic_failures",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.3
+      },
+      {
+        "test_id": "INJ-01",
+        "user_input": "Weird syntax appear on login page. Looks like code but I'm not sure.",
+        "expected": "injection",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "INJ-02",
+        "user_input": "My table disappeared from the database. Could someone have deleted it?",
+        "expected": "injection",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "INJ-03",
+        "user_input": "When I type special characters in the search box, the page breaks.",
+        "expected": "injection",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.42
+      },
+      {
+        "test_id": "INJ-04",
+        "user_input": "I saw error messages that show database structure. Is that dangerous?",
+        "expected": "injection",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}",
+        "correct": false,
+        "elapsed_time": 0.3
+      },
+      {
+        "test_id": "INJ-05",
+        "user_input": "Someone entered JavaScript code in a comment and it executed on other users' browsers.",
+        "expected": "injection",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.3
+      },
+      {
+        "test_id": "INJ-06",
+        "user_input": "The login form accepts strange characters and then the database shows errors.",
+        "expected": "injection",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.39
+      },
+      {
+        "test_id": "INJ-07",
+        "user_input": "I'm worried! The website is showing database errors when I search for things.",
+        "expected": "injection",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "INJ-08",
+        "user_input": "When I paste code snippets into the contact form, they appear on other users' screens as actual code.",
+        "expected": "injection",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "INJ-09",
+        "user_input": "The system crashed after someone entered a weird command in the file upload field.",
+        "expected": "injection",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.34
+      },
+      {
+        "test_id": "INJ-10",
+        "user_input": "I noticed that when users type certain characters in the search, the page shows SQL errors with table names.",
+        "expected": "injection",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 1.07
+      },
+      {
+        "test_id": "AUTH-01",
+        "user_input": "I can log in with password '12345'. That seems too easy.",
+        "expected": "broken_authentication",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.38
+      },
+      {
+        "test_id": "AUTH-02",
+        "user_input": "My session never expires. I logged in last week and I'm still logged in.",
+        "expected": "broken_authentication",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.28
+      },
+      {
+        "test_id": "AUTH-03",
+        "user_input": "I tried wrong passwords many times but the system didn't lock me out.",
+        "expected": "broken_authentication",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "AUTH-04",
+        "user_input": "I forgot my password but I can still access my account somehow.",
+        "expected": "broken_authentication",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}",
+        "correct": false,
+        "elapsed_time": 0.43
+      },
+      {
+        "test_id": "AUTH-05",
+        "user_input": "The system doesn't require two-factor authentication for admin accounts.",
+        "expected": "broken_authentication",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "AUTH-06",
+        "user_input": "I logged out but when I go back to the site, I'm still logged in.",
+        "expected": "broken_authentication",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "AUTH-07",
+        "user_input": "Users can set their password to anything, even just one character.",
+        "expected": "broken_authentication",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}",
+        "correct": false,
+        "elapsed_time": 0.41
+      },
+      {
+        "test_id": "AUTH-08",
+        "user_input": "The system allows me to use my username as my password. That can't be secure.",
+        "expected": "broken_authentication",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.28
+      },
+      {
+        "test_id": "AUTH-09",
+        "user_input": "I can reset anyone's password if I know their email address. There's no verification.",
+        "expected": "broken_authentication",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.31
+      },
+      {
+        "test_id": "AUTH-10",
+        "user_input": "The system shows me if a username exists or not when I try to log in. That seems like it helps attackers.",
+        "expected": "broken_authentication",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.4
+      },
+      {
+        "test_id": "AMBIG-01",
+        "user_input": "The website crashed after someone entered weird text. Now it shows database errors.",
+        "expected": "injection",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.31
+      },
+      {
+        "test_id": "AMBIG-02",
+        "user_input": "I can see other people's data when I shouldn't be able to. The URL changes when I click around.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "AMBIG-03",
+        "user_input": "I found user information in log files. It includes passwords and credit cards.",
+        "expected": "cryptographic_failures",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.32
+      },
+      {
+        "test_id": "AMBIG-04",
+        "user_input": "Users can set their password to anything, even just one character.",
+        "expected": "broken_authentication",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.31
+      },
+      {
+        "test_id": "AMBIG-05",
+        "user_input": "I can access admin functions by changing my role in the cookie. The system doesn't check if I'm really an admin.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "AMBIG-06",
+        "user_input": "When I enter HTML tags in my profile, they show up as actual HTML on other users' pages.",
+        "expected": "injection",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "AMBIG-07",
+        "user_input": "The API endpoint returns sensitive data without checking if I'm authorized, and it's all in plain text.",
+        "expected": "cryptographic_failures",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.41
+      },
+      {
+        "test_id": "AMBIG-08",
+        "user_input": "I can bypass the login by manipulating the session token. The system doesn't verify it properly.",
+        "expected": "broken_authentication",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "AMBIG-09",
+        "user_input": "The search function breaks when I enter database commands. It shows me table names and column structures.",
+        "expected": "injection",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "AMBIG-10",
+        "user_input": "I can see deleted posts by changing the status parameter. They're marked as deleted but I can still view them.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-or-v1*************************************************************5bd4. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.41
+      }
+    ],
+    "accuracy": 0.0,
+    "correct": 0,
+    "total_tests": 50,
+    "avg_time": 0.35,
+    "total_time": 17.58
+  },
+  "comparison": {
+    "accuracy_diff": 0.0,
+    "gemini_better": false,
+    "openai_better": false,
+    "time_diff": -0.24,
+    "gemini_faster": true,
+    "openai_faster": false
+  }
+}

@@ -1,0 +1,288 @@
+"""
+Run LLM Baseline Comparison Experiment
+======================================
+
+Compares your system (Gemini) against another LLM baseline:
+- Claude 3.5 Sonnet
+- OpenAI GPT-4o
+
+Generates comparison results and visualizations.
+"""
+
+import json
+import sys
+import os
+from pathlib import Path
+from datetime import datetime
+from typing import Dict, Any, List
+
+# Fix Windows console encoding
+if sys.platform == "win32":
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from src.llm_adapter import LLMAdapter
+from src.classification_rules import canonicalize_label
+from test_cases import TEST_CASES
+
+
+def evaluate_model(
+    model_name: str,
+    provider: str,
+    test_cases: List[Dict],
+    api_key: str = None
+) -> Dict[str, Any]:
+    """Evaluate a single LLM model on test cases."""
+    
+    print(f"\n{'='*70}")
+    print(f"Evaluating: {model_name} ({provider})")
+    print(f"{'='*70}\n")
+    
+    try:
+        adapter = LLMAdapter(model=model_name, api_key=api_key)
+    except Exception as e:
+        print(f"[ERROR] Failed to initialize {model_name}: {e}")
+        return {
+            "model": model_name,
+            "provider": provider,
+            "status": "error",
+            "error": str(e)
+        }
+    
+    single_cases = test_cases[:40]
+    ambiguous_cases = test_cases[40:50]
+    
+    results = {
+        "single_correct": 0,
+        "single_total": len(single_cases),
+        "ambiguous_correct": 0,
+        "ambiguous_total": len(ambiguous_cases),
+        "detailed_results": []
+    }
+    
+    # Evaluate single cases
+    print(f"Evaluating {len(single_cases)} single-incident cases...")
+    for i, case in enumerate(single_cases, 1):
+        print(f"[{i:2d}/{len(single_cases)}] {case.get('id', 'UNKNOWN')}", end=" ... ")
+        
+        try:
+            classification = adapter.classify_incident(
+                description=case["user_input"],
+                context="",
+                conversation_history=None
+            )
+            
+            predicted = canonicalize_label(classification.get("fine_label", "other"))
+            expected = canonicalize_label(case["expected"])
+            is_correct = predicted == expected
+            
+            if is_correct:
+                results["single_correct"] += 1
+            
+            status = "[OK]" if is_correct else "[X]"
+            print(f"{status} {predicted[:25]:25s}")
+            
+            results["detailed_results"].append({
+                "test_id": case.get("id"),
+                "type": "single",
+                "predicted": predicted,
+                "expected": expected,
+                "correct": is_correct,
+                "confidence": classification.get("confidence", 0.0)
+            })
+            
+        except Exception as e:
+            print(f"ERROR: {str(e)[:50]}")
+            results["detailed_results"].append({
+                "test_id": case.get("id"),
+                "type": "single",
+                "error": str(e),
+                "correct": False
+            })
+    
+    # Evaluate ambiguous cases
+    print(f"\nEvaluating {len(ambiguous_cases)} ambiguous cases...")
+    for i, case in enumerate(ambiguous_cases, 1):
+        print(f"[{i:2d}/{len(ambiguous_cases)}] {case.get('id', 'UNKNOWN')}", end=" ... ")
+        
+        try:
+            classification = adapter.classify_incident(
+                description=case["user_input"],
+                context="",
+                conversation_history=None
+            )
+            
+            predicted = canonicalize_label(classification.get("fine_label", "other"))
+            expected = canonicalize_label(case["expected"])
+            is_correct = predicted == expected
+            
+            if is_correct:
+                results["ambiguous_correct"] += 1
+            
+            status = "[OK]" if is_correct else "[X]"
+            print(f"{status} {predicted[:25]:25s}")
+            
+            results["detailed_results"].append({
+                "test_id": case.get("id"),
+                "type": "ambiguous",
+                "predicted": predicted,
+                "expected": expected,
+                "correct": is_correct,
+                "confidence": classification.get("confidence", 0.0)
+            })
+            
+        except Exception as e:
+            print(f"ERROR: {str(e)[:50]}")
+            results["detailed_results"].append({
+                "test_id": case.get("id"),
+                "type": "ambiguous",
+                "error": str(e),
+                "correct": False
+            })
+    
+    # Calculate accuracies
+    single_acc = (results["single_correct"] / results["single_total"] * 100) if results["single_total"] > 0 else 0
+    ambiguous_acc = (results["ambiguous_correct"] / results["ambiguous_total"] * 100) if results["ambiguous_total"] > 0 else 0
+    overall_correct = results["single_correct"] + results["ambiguous_correct"]
+    overall_total = results["single_total"] + results["ambiguous_total"]
+    overall_acc = (overall_correct / overall_total * 100) if overall_total > 0 else 0
+    
+    results["single_accuracy"] = round(single_acc, 2)
+    results["ambiguous_accuracy"] = round(ambiguous_acc, 2)
+    results["overall_accuracy"] = round(overall_acc, 2)
+    results["overall_correct"] = overall_correct
+    results["overall_total"] = overall_total
+    
+    print(f"\n{'='*70}")
+    print(f"Results: {model_name}")
+    print(f"{'='*70}")
+    print(f"Single-Incident Accuracy: {single_acc:.2f}% ({results['single_correct']}/{results['single_total']})")
+    print(f"Ambiguous Case Accuracy: {ambiguous_acc:.2f}% ({results['ambiguous_correct']}/{results['ambiguous_total']})")
+    print(f"Overall Accuracy: {overall_acc:.2f}% ({overall_correct}/{overall_total})")
+    print(f"{'='*70}\n")
+    
+    return {
+        "model": model_name,
+        "provider": provider,
+        "status": "success",
+        **results
+    }
+
+
+def main():
+    """Main entry point."""
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="Compare Gemini vs LLM baseline")
+    parser.add_argument("--baseline", choices=["claude", "openai"], default="claude",
+                       help="Baseline model to use")
+    parser.add_argument("--gemini-key", help="Gemini API key")
+    parser.add_argument("--claude-key", help="Claude API key")
+    parser.add_argument("--openai-key", help="OpenAI API key")
+    
+    args = parser.parse_args()
+    
+    # Get API keys
+    gemini_key = args.gemini_key or os.getenv("GEMINI_API_KEY")
+    claude_key = args.claude_key or os.getenv("ANTHROPIC_API_KEY")
+    openai_key = args.openai_key or os.getenv("OPENAI_API_KEY")
+    
+    print("\n" + "="*70)
+    print("LLM Baseline Comparison Experiment")
+    print("="*70)
+    print(f"Primary Model: Gemini 2.5 Pro")
+    print(f"Baseline Model: {args.baseline.upper()}")
+    print("="*70)
+    
+    # Check keys
+    if not gemini_key:
+        print("\n[ERROR] Gemini API key not set!")
+        print("Set: $env:GEMINI_API_KEY = 'your-key'")
+        return
+    
+    if args.baseline == "claude" and not claude_key:
+        print("\n[ERROR] Claude API key not set!")
+        print("Set: $env:ANTHROPIC_API_KEY = 'sk-ant-your-key'")
+        print("Get it: https://console.anthropic.com/")
+        return
+    
+    if args.baseline == "openai" and not openai_key:
+        print("\n[ERROR] OpenAI API key not set!")
+        print("Set: $env:OPENAI_API_KEY = 'sk-your-key'")
+        print("Get it: https://platform.openai.com/")
+        return
+    
+    # Evaluate Gemini (your system)
+    gemini_results = evaluate_model(
+        model_name="gemini-2.5-pro",
+        provider="gemini",
+        test_cases=TEST_CASES,
+        api_key=gemini_key
+    )
+    
+    # Evaluate baseline
+    if args.baseline == "claude":
+        baseline_results = evaluate_model(
+            model_name="claude-3-5-sonnet-20241022",
+            provider="anthropic",
+            test_cases=TEST_CASES,
+            api_key=claude_key
+        )
+        baseline_name = "Claude 3.5 Sonnet"
+    else:
+        baseline_results = evaluate_model(
+            model_name="gpt-4o",
+            provider="openai",
+            test_cases=TEST_CASES,
+            api_key=openai_key
+        )
+        baseline_name = "OpenAI GPT-4o"
+    
+    # Compile comparison
+    comparison = {
+        "timestamp": datetime.now().isoformat(),
+        "primary_model": {
+            "name": "Gemini 2.5 Pro",
+            "results": gemini_results
+        },
+        "baseline_model": {
+            "name": baseline_name,
+            "results": baseline_results
+        },
+        "comparison": {
+            "single_accuracy_diff": round(
+                gemini_results.get("single_accuracy", 0) - baseline_results.get("single_accuracy", 0),
+                2
+            ),
+            "ambiguous_accuracy_diff": round(
+                gemini_results.get("ambiguous_accuracy", 0) - baseline_results.get("ambiguous_accuracy", 0),
+                2
+            ),
+            "overall_accuracy_diff": round(
+                gemini_results.get("overall_accuracy", 0) - baseline_results.get("overall_accuracy", 0),
+                2
+            )
+        }
+    }
+    
+    # Save results
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_file = f"reports/llm_baseline_comparison_{args.baseline}_{timestamp}.json"
+    os.makedirs("reports", exist_ok=True)
+    
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(comparison, f, indent=2, ensure_ascii=False)
+    
+    print(f"[OK] Results saved to {output_file}")
+    print(f"\n[INFO] Generate visualization with:")
+    print(f"  python scripts/visualize_llm_comparison.py {output_file}")
+    
+    return comparison
+
+
+if __name__ == "__main__":
+    main()
+

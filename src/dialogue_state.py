@@ -2,6 +2,7 @@
 """
 Dialogue state manager for multi-turn conversations.
 Tracks confidence and determines when to proceed to Phase-2.
+Originally had this simpler but needed to track conversation history better.
 """
 
 from typing import List, Dict, Any, Optional

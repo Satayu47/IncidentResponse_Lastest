@@ -1,0 +1,196 @@
+{
+  "timestamp": "2025-11-18T15:27:46.735913",
+  "test_cases_count": 10,
+  "gemini": {
+    "model": "gemini-2.5-pro",
+    "provider": "gemini",
+    "status": "success",
+    "results": [
+      {
+        "test_id": "BAC-01",
+        "user_input": "I changed the number in the URL and saw someone else's profile. Is that normal?",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.41
+      },
+      {
+        "test_id": "BAC-02",
+        "user_input": "My friend logged into my account using their own password. That shouldn't work right?",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.15
+      },
+      {
+        "test_id": "BAC-03",
+        "user_input": "I can see all customer orders even though I'm just a regular employee.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.14
+      },
+      {
+        "test_id": "BAC-04",
+        "user_input": "When I delete my account, I can still access it by direct link.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "BAC-05",
+        "user_input": "I'm a viewer but I can approve transactions somehow.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "BAC-06",
+        "user_input": "I can access the admin panel even though I'm not an admin. I just typed /admin in the URL.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.07
+      },
+      {
+        "test_id": "BAC-07",
+        "user_input": "When I click on a link from my email, I can see other people's private messages.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.11
+      },
+      {
+        "test_id": "BAC-08",
+        "user_input": "I can edit other users' posts by changing the post ID in the URL.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.09
+      },
+      {
+        "test_id": "BAC-09",
+        "user_input": "As a customer, I can see invoices from other companies by changing the company ID.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.14
+      },
+      {
+        "test_id": "BAC-10",
+        "user_input": "I can download files that belong to other users. I just need to know the file ID.",
+        "expected": "broken_access_control",
+        "error": "400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]",
+        "correct": false,
+        "elapsed_time": 0.06
+      }
+    ],
+    "accuracy": 0.0,
+    "correct": 0,
+    "total_tests": 10,
+    "avg_time": 0.14,
+    "total_time": 1.39
+  },
+  "openai": {
+    "model": "gpt-4o",
+    "provider": "openai",
+    "status": "success",
+    "results": [
+      {
+        "test_id": "BAC-01",
+        "user_input": "I changed the number in the URL and saw someone else's profile. Is that normal?",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zUgA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 1.05
+      },
+      {
+        "test_id": "BAC-02",
+        "user_input": "My friend logged into my account using their own password. That shouldn't work right?",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zUgA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}",
+        "correct": false,
+        "elapsed_time": 0.45
+      },
+      {
+        "test_id": "BAC-03",
+        "user_input": "I can see all customer orders even though I'm just a regular employee.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zUgA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.33
+      },
+      {
+        "test_id": "BAC-04",
+        "user_input": "When I delete my account, I can still access it by direct link.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zUgA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}",
+        "correct": false,
+        "elapsed_time": 0.48
+      },
+      {
+        "test_id": "BAC-05",
+        "user_input": "I'm a viewer but I can approve transactions somehow.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zUgA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.4
+      },
+      {
+        "test_id": "BAC-06",
+        "user_input": "I can access the admin panel even though I'm not an admin. I just typed /admin in the URL.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zUgA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.34
+      },
+      {
+        "test_id": "BAC-07",
+        "user_input": "When I click on a link from my email, I can see other people's private messages.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zUgA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.29
+      },
+      {
+        "test_id": "BAC-08",
+        "user_input": "I can edit other users' posts by changing the post ID in the URL.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zUgA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}}",
+        "correct": false,
+        "elapsed_time": 0.37
+      },
+      {
+        "test_id": "BAC-09",
+        "user_input": "As a customer, I can see invoices from other companies by changing the company ID.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zUgA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}",
+        "correct": false,
+        "elapsed_time": 0.4
+      },
+      {
+        "test_id": "BAC-10",
+        "user_input": "I can download files that belong to other users. I just need to know the file ID.",
+        "expected": "broken_access_control",
+        "error": "Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-********************************************************************************************************************************************************zUgA. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}",
+        "correct": false,
+        "elapsed_time": 0.37
+      }
+    ],
+    "accuracy": 0.0,
+    "correct": 0,
+    "total_tests": 10,
+    "avg_time": 0.45,
+    "total_time": 4.49
+  },
+  "comparison": {
+    "accuracy_diff": 0.0,
+    "gemini_better": false,
+    "openai_better": false,
+    "time_diff": -0.31,
+    "gemini_faster": true,
+    "openai_faster": false
+  }
+}

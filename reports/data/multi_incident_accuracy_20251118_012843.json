@@ -1,0 +1,1259 @@
+{
+  "summary": {
+    "classification_accuracy": 100.0,
+    "playbook_mapping_accuracy": 100.0,
+    "merge_validation_accuracy": 100.0,
+    "overall_accuracy": 100.0
+  },
+  "detailed_results": [
+    {
+      "id": "MULTI-01",
+      "input": "I can access the admin panel without logging in, and the login form is vulnerable to SQL injection.",
+      "expected_labels": [
+        "broken_access_control",
+        "injection"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A03_injection"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "injection",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A03_injection"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-02",
+      "input": "The API returns user passwords in plain text, and I can access other users' data by changing the URL.",
+      "expected_labels": [
+        "cryptographic_failures",
+        "broken_access_control"
+      ],
+      "expected_playbooks": [
+        "A02_cryptographic_failures",
+        "A01_broken_access_control"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A02_cryptographic_failures",
+        "A01_broken_access_control"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-03",
+      "input": "I can log in with password '12345' and then access admin functions even though I'm not an admin.",
+      "expected_labels": [
+        "broken_authentication",
+        "broken_access_control"
+      ],
+      "expected_playbooks": [
+        "A07_authentication_failures",
+        "A01_broken_access_control"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_authentication",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A07_authentication_failures",
+        "A01_broken_access_control"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-04",
+      "input": "The website doesn't use HTTPS and I can see database errors when I enter special characters in the search box.",
+      "expected_labels": [
+        "cryptographic_failures",
+        "injection"
+      ],
+      "expected_playbooks": [
+        "A02_cryptographic_failures",
+        "A03_injection"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A02_cryptographic_failures",
+        "A03_injection"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-05",
+      "input": "I found passwords stored in plain text in the database, and the system doesn't lock accounts after failed login attempts.",
+      "expected_labels": [
+        "cryptographic_failures",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A02_cryptographic_failures",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A02_cryptographic_failures",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-06",
+      "input": "I can see other users' private messages by changing the message ID in the URL, and the messages are sent over HTTP instead of HTTPS.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_access_control",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-07",
+      "input": "Someone entered JavaScript code in a comment and it executed on other users' browsers. Also, I can access the admin panel without being an admin.",
+      "expected_labels": [
+        "injection",
+        "broken_access_control"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A01_broken_access_control"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "injection",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A01_broken_access_control"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-08",
+      "input": "The login form accepts SQL injection attacks, and users can set their password to anything, even just one character.",
+      "expected_labels": [
+        "injection",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "injection",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-09",
+      "input": "I can see all customer orders even though I'm just a regular employee, and the API returns credit card numbers without encryption.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_access_control",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-10",
+      "input": "The system crashed after someone entered a weird command in the file upload field, and I can still access my account even though I logged out.",
+      "expected_labels": [
+        "injection",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "injection",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-11",
+      "input": "I changed the user ID in the URL and saw someone else's profile. Also, the website doesn't use HTTPS for login.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-12",
+      "input": "The login form accepts ' OR 1=1 -- as username, and my session never expires even after days.",
+      "expected_labels": [
+        "injection",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "medium",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "injection",
+      "classification_confidence": 0.98,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-13",
+      "input": "I can see all customer orders as a regular employee, and passwords are stored in plain text in the database.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-14",
+      "input": "When I type special characters in the search box, it shows database errors. Also, I can access the admin panel without logging in.",
+      "expected_labels": [
+        "injection",
+        "broken_access_control"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A01_broken_access_control"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_access_control",
+      "classification_confidence": 0.98,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A01_broken_access_control"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-15",
+      "input": "I found credit card numbers in the logs without encryption, and the system doesn't lock accounts after failed login attempts.",
+      "expected_labels": [
+        "cryptographic_failures",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A02_cryptographic_failures",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A02_cryptographic_failures",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-16",
+      "input": "I'm a viewer but I can approve transactions, and the API returns user emails in plain text without any protection.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_access_control",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-17",
+      "input": "Someone entered JavaScript code in a comment and it executed on other users' browsers. Also, I can log in with password '12345'.",
+      "expected_labels": [
+        "injection",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "medium",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "injection",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-18",
+      "input": "I can edit other users' posts by changing the post ID in the URL, and the messages are sent over HTTP instead of HTTPS.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_access_control",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-19",
+      "input": "The website doesn't use HTTPS, and I tried wrong passwords many times but the system didn't lock me out.",
+      "expected_labels": [
+        "cryptographic_failures",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A02_cryptographic_failures",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "medium",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A02_cryptographic_failures",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-20",
+      "input": "I can download files that belong to other users by knowing the file ID, and the backup files contain unencrypted customer data.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-21",
+      "input": "The login form accepts SQL injection attacks, and my session never expires. I logged in last week and I'm still logged in.",
+      "expected_labels": [
+        "injection",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "injection",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-22",
+      "input": "I can see other users' private messages by changing the message ID, and the API returns passwords in the JSON response without hashing.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_access_control",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-23",
+      "input": "I can access the admin panel even though I'm not an admin, and the system stores social security numbers in plain text.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-24",
+      "input": "When I paste code snippets into the contact form, they appear on other users' screens as actual code. Also, users can set their password to anything.",
+      "expected_labels": [
+        "injection",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "medium",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "injection",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-25",
+      "input": "I can see all customer orders even though I'm just a regular employee, and the mobile app sends user location data over HTTP instead of HTTPS.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_access_control",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-26",
+      "input": "The system crashed after someone entered a weird command in the file upload field, and I can log in with password '12345'.",
+      "expected_labels": [
+        "injection",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_authentication",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-27",
+      "input": "I found medical records in the database stored without encryption, and I can access them by changing the patient ID in the URL.",
+      "expected_labels": [
+        "cryptographic_failures",
+        "broken_access_control"
+      ],
+      "expected_playbooks": [
+        "A02_cryptographic_failures",
+        "A01_broken_access_control"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A02_cryptographic_failures",
+        "A01_broken_access_control"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-28",
+      "input": "The login form accepts strange characters and shows database errors, and the system doesn't require two-factor authentication for admin accounts.",
+      "expected_labels": [
+        "injection",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_authentication",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-29",
+      "input": "I can see other users' data when I shouldn't be able to, and the website doesn't use HTTPS for sending passwords.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_access_control",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-30",
+      "input": "I noticed that when users type certain characters in the search, the page shows SQL errors. Also, I logged out but when I go back, I'm still logged in.",
+      "expected_labels": [
+        "injection",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "injection",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-31",
+      "input": "I can access admin functions by changing my role in the cookie, and passwords are stored in plain text in the database.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-32",
+      "input": "The API endpoint returns sensitive data without checking if I'm authorized, and it's all in plain text without encryption.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-33",
+      "input": "I can bypass the login by manipulating the session token, and the system allows me to use my username as my password.",
+      "expected_labels": [
+        "broken_authentication",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A07_authentication_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_authentication",
+      "classification_confidence": 1.0,
+      "playbook_ids_found": [
+        "A07_authentication_failures",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 17,
+      "merged_edges": 42,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-34",
+      "input": "The search function breaks when I enter database commands, and I can see deleted posts by changing the status parameter.",
+      "expected_labels": [
+        "injection",
+        "broken_access_control"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A01_broken_access_control"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "injection",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A01_broken_access_control"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-35",
+      "input": "I found user information in log files including passwords and credit cards, and I can access other users' data by changing the URL.",
+      "expected_labels": [
+        "cryptographic_failures",
+        "broken_access_control"
+      ],
+      "expected_playbooks": [
+        "A02_cryptographic_failures",
+        "A01_broken_access_control"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.98,
+      "playbook_ids_found": [
+        "A02_cryptographic_failures",
+        "A01_broken_access_control"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-36",
+      "input": "When I enter HTML tags in my profile, they show up as actual HTML on other users' screens, and the system doesn't lock accounts after failed attempts.",
+      "expected_labels": [
+        "injection",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "medium",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "injection",
+      "classification_confidence": 0.98,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-37",
+      "input": "I can see all customer orders as a regular employee, and the backup files contain unencrypted customer data that anyone with access can read.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-38",
+      "input": "The login form accepts ' OR 1=1 -- and I can still access my account even though I forgot my password.",
+      "expected_labels": [
+        "injection",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "injection",
+      "classification_confidence": 0.98,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-39",
+      "input": "I can access the admin panel without logging in, and the website doesn't use HTTPS for login pages.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "medium",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-40",
+      "input": "Someone entered JavaScript code in a comment and it executed on other users' browsers. Also, I can reset anyone's password if I know their email.",
+      "expected_labels": [
+        "injection",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "injection",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-41",
+      "input": "I can see other users' private messages by changing the message ID, and the messages are stored in plain text in the database.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_access_control",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-42",
+      "input": "The system crashed after someone entered a weird command in the file upload field, and my session never expires even after days.",
+      "expected_labels": [
+        "injection",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_authentication",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-43",
+      "input": "I can edit other users' posts by changing the post ID, and the API returns user emails and phone numbers without any protection.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_access_control",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-44",
+      "input": "When I type special characters in the search box, the page breaks and shows database errors. Also, I can log in with password '12345'.",
+      "expected_labels": [
+        "injection",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "medium",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_authentication",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-45",
+      "input": "I found passwords stored in plain text in the database, and I can access the admin panel even though I'm not an admin.",
+      "expected_labels": [
+        "cryptographic_failures",
+        "broken_access_control"
+      ],
+      "expected_playbooks": [
+        "A02_cryptographic_failures",
+        "A01_broken_access_control"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A02_cryptographic_failures",
+        "A01_broken_access_control"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-46",
+      "input": "The website doesn't use HTTPS, and I can see database errors when I enter certain characters in the search field.",
+      "expected_labels": [
+        "cryptographic_failures",
+        "injection"
+      ],
+      "expected_playbooks": [
+        "A02_cryptographic_failures",
+        "A03_injection"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A02_cryptographic_failures",
+        "A03_injection"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-47",
+      "input": "I can see all customer orders even though I'm just a regular employee, and the system shows me if a username exists when I try to log in.",
+      "expected_labels": [
+        "broken_access_control",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "broken_access_control",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-48",
+      "input": "When I paste code snippets into the contact form, they appear on other users' screens. Also, the system doesn't require two-factor authentication.",
+      "expected_labels": [
+        "injection",
+        "broken_authentication"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "difficulty": "medium",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "injection",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A07_authentication_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-49",
+      "input": "I can download files that belong to other users by knowing the file ID, and the files are sent over HTTP instead of HTTPS.",
+      "expected_labels": [
+        "broken_access_control",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "cryptographic_failures",
+      "classification_confidence": 0.9,
+      "playbook_ids_found": [
+        "A01_broken_access_control",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    },
+    {
+      "id": "MULTI-50",
+      "input": "The login form accepts SQL injection attacks, and I found medical records in the database stored without encryption.",
+      "expected_labels": [
+        "injection",
+        "cryptographic_failures"
+      ],
+      "expected_playbooks": [
+        "A03_injection",
+        "A02_cryptographic_failures"
+      ],
+      "difficulty": "very_hard",
+      "classification_correct": true,
+      "playbook_mapping_correct": true,
+      "merge_valid": true,
+      "predicted_label": "injection",
+      "classification_confidence": 0.95,
+      "playbook_ids_found": [
+        "A03_injection",
+        "A02_cryptographic_failures"
+      ],
+      "merged_nodes": 34,
+      "merged_edges": 84,
+      "is_acyclic": true
+    }
+  ]
+}

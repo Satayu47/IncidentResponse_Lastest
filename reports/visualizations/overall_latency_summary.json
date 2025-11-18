@@ -1,0 +1,73 @@
+{
+  "test_cases": 10,
+  "statistics": {
+    "mean_ms": 90.93079566955566,
+    "mean_seconds": 0.09093079566955567,
+    "min_ms": 6.645917892456055,
+    "max_ms": 191.6494369506836,
+    "std_dev_ms": 81.5166638853878,
+    "median_ms": 93.02008152008057,
+    "range_ms": 185.00351905822754,
+    "coefficient_of_variation": 89.64692685811416
+  },
+  "data_points": [
+    {
+      "test_case": 1,
+      "total_latency_ms": 21.038055419921875,
+      "total_latency_seconds": 0.021038055419921875
+    },
+    {
+      "test_case": 2,
+      "total_latency_ms": 191.6494369506836,
+      "total_latency_seconds": 0.1916494369506836
+    },
+    {
+      "test_case": 3,
+      "total_latency_ms": 7.390499114990234,
+      "total_latency_seconds": 0.007390499114990234
+    },
+    {
+      "test_case": 4,
+      "total_latency_ms": 165.69018363952637,
+      "total_latency_seconds": 0.16569018363952637
+    },
+    {
+      "test_case": 5,
+      "total_latency_ms": 165.00210762023926,
+      "total_latency_seconds": 0.16500210762023926
+    },
+    {
+      "test_case": 6,
+      "total_latency_ms": 168.7295436859131,
+      "total_latency_seconds": 0.16872954368591309
+    },
+    {
+      "test_case": 7,
+      "total_latency_ms": 6.913185119628906,
+      "total_latency_seconds": 0.006913185119628906
+    },
+    {
+      "test_case": 8,
+      "total_latency_ms": 169.16346549987793,
+      "total_latency_seconds": 0.16916346549987793
+    },
+    {
+      "test_case": 9,
+      "total_latency_ms": 6.645917892456055,
+      "total_latency_seconds": 0.006645917892456055
+    },
+    {
+      "test_case": 10,
+      "total_latency_ms": 7.085561752319336,
+      "total_latency_seconds": 0.007085561752319336
+    }
+  ],
+  "validation": {
+    "data_points_count": 10,
+    "expected_count": 10,
+    "all_valid": true,
+    "mean_calculated": 90.93079566955566,
+    "std_calculated": 81.5166638853878,
+    "outlier_detected": false
+  }
+}

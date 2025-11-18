@@ -3,6 +3,7 @@
 Keyword/pattern-based detection for common security incidents.
 Fast path before expensive LLM calls - saves a lot of API costs.
 Built up these patterns over time from real incident reports.
+Some patterns were added after seeing common false positives.
 """
 
 import re

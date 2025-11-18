@@ -1,0 +1,192 @@
+[
+  {
+    "total_latency_ms": 146.89874649047852,
+    "step1_extraction_ms": 0.0,
+    "step2_explicit_detection_ms": 13.060569763183594,
+    "step3_kb_retrieval_ms": 0.0,
+    "step4_llm_classification_ms": 128.30877304077148,
+    "step5_dialogue_update_ms": 0.0,
+    "step6_phase2_generation_ms": 5.5294036865234375,
+    "classification_result": {
+      "fine_label": "injection",
+      "confidence": 0.95,
+      "incident_type": "Unknown"
+    },
+    "phase2_status": "success",
+    "playbooks_found": 1,
+    "steps_generated": 17,
+    "test_case": 1,
+    "description": "SQL injection detected from IP 192.168.1.1"
+  },
+  {
+    "total_latency_ms": 107.89680480957031,
+    "step1_extraction_ms": 0.0,
+    "step2_explicit_detection_ms": 0.0,
+    "step3_kb_retrieval_ms": 0.0,
+    "step4_llm_classification_ms": 101.898193359375,
+    "step5_dialogue_update_ms": 0.0,
+    "step6_phase2_generation_ms": 5.9986114501953125,
+    "classification_result": {
+      "fine_label": "injection",
+      "confidence": 0.95,
+      "incident_type": "Unknown"
+    },
+    "phase2_status": "success",
+    "playbooks_found": 1,
+    "steps_generated": 17,
+    "test_case": 2,
+    "description": "XSS vulnerability found in login form"
+  },
+  {
+    "total_latency_ms": 105.48853874206543,
+    "step1_extraction_ms": 0.0,
+    "step2_explicit_detection_ms": 0.0,
+    "step3_kb_retrieval_ms": 0.0,
+    "step4_llm_classification_ms": 102.48851776123047,
+    "step5_dialogue_update_ms": 0.0,
+    "step6_phase2_generation_ms": 0.0,
+    "classification_result": {
+      "fine_label": null,
+      "confidence": 0.0,
+      "incident_type": "Unknown"
+    },
+    "phase2_status": "no_playbook",
+    "playbooks_found": 0,
+    "steps_generated": 0,
+    "test_case": 3,
+    "description": "Broken access control allows unauthorized data access"
+  },
+  {
+    "total_latency_ms": 103.48629951477051,
+    "step1_extraction_ms": 0.0,
+    "step2_explicit_detection_ms": 0.0,
+    "step3_kb_retrieval_ms": 0.0,
+    "step4_llm_classification_ms": 103.48629951477051,
+    "step5_dialogue_update_ms": 0.0,
+    "step6_phase2_generation_ms": 0.0,
+    "classification_result": {
+      "fine_label": null,
+      "confidence": 0.0,
+      "incident_type": "Unknown"
+    },
+    "phase2_status": "no_playbook",
+    "playbooks_found": 0,
+    "steps_generated": 0,
+    "test_case": 4,
+    "description": "Authentication failure detected - multiple failed login attempts"
+  },
+  {
+    "total_latency_ms": 104.62450981140137,
+    "step1_extraction_ms": 1.0001659393310547,
+    "step2_explicit_detection_ms": 0.0,
+    "step3_kb_retrieval_ms": 0.0,
+    "step4_llm_classification_ms": 97.12696075439453,
+    "step5_dialogue_update_ms": 0.0,
+    "step6_phase2_generation_ms": 6.497383117675781,
+    "classification_result": {
+      "fine_label": "sensitive_data_exposure",
+      "confidence": 0.8,
+      "incident_type": "Unknown"
+    },
+    "phase2_status": "success",
+    "playbooks_found": 1,
+    "steps_generated": 17,
+    "test_case": 5,
+    "description": "Security misconfiguration exposes sensitive data"
+  },
+  {
+    "total_latency_ms": 99.48348999023438,
+    "step1_extraction_ms": 0.0,
+    "step2_explicit_detection_ms": 0.0,
+    "step3_kb_retrieval_ms": 0.0,
+    "step4_llm_classification_ms": 93.48273277282715,
+    "step5_dialogue_update_ms": 0.0,
+    "step6_phase2_generation_ms": 6.000757217407227,
+    "classification_result": {
+      "fine_label": "vulnerable_components",
+      "confidence": 0.85,
+      "incident_type": "Unknown"
+    },
+    "phase2_status": "success",
+    "playbooks_found": 1,
+    "steps_generated": 17,
+    "test_case": 6,
+    "description": "Vulnerable component detected - outdated library version"
+  },
+  {
+    "total_latency_ms": 233.33430290222168,
+    "step1_extraction_ms": 0.5044937133789062,
+    "step2_explicit_detection_ms": 0.0,
+    "step3_kb_retrieval_ms": 0.0,
+    "step4_llm_classification_ms": 232.82980918884277,
+    "step5_dialogue_update_ms": 0.0,
+    "step6_phase2_generation_ms": 0.0,
+    "classification_result": {
+      "fine_label": null,
+      "confidence": 0.0,
+      "incident_type": "Unknown"
+    },
+    "phase2_status": "no_playbook",
+    "playbooks_found": 0,
+    "steps_generated": 0,
+    "test_case": 7,
+    "description": "SSRF attack attempted from external source"
+  },
+  {
+    "total_latency_ms": 112.5037670135498,
+    "step1_extraction_ms": 0.0,
+    "step2_explicit_detection_ms": 1.508474349975586,
+    "step3_kb_retrieval_ms": 0.0,
+    "step4_llm_classification_ms": 104.08711433410645,
+    "step5_dialogue_update_ms": 0.0,
+    "step6_phase2_generation_ms": 6.908178329467773,
+    "classification_result": {
+      "fine_label": "cryptographic_failures",
+      "confidence": 0.85,
+      "incident_type": "Unknown"
+    },
+    "phase2_status": "success",
+    "playbooks_found": 1,
+    "steps_generated": 17,
+    "test_case": 8,
+    "description": "Cryptographic failure - weak encryption algorithm used"
+  },
+  {
+    "total_latency_ms": 112.25628852844238,
+    "step1_extraction_ms": 0.0,
+    "step2_explicit_detection_ms": 0.0,
+    "step3_kb_retrieval_ms": 0.0,
+    "step4_llm_classification_ms": 103.24382781982422,
+    "step5_dialogue_update_ms": 0.0,
+    "step6_phase2_generation_ms": 9.012460708618164,
+    "classification_result": {
+      "fine_label": "broken_access_control",
+      "confidence": 0.85,
+      "incident_type": "Unknown"
+    },
+    "phase2_status": "success",
+    "playbooks_found": 1,
+    "steps_generated": 17,
+    "test_case": 9,
+    "description": "Insecure design allows privilege escalation"
+  },
+  {
+    "total_latency_ms": 108.79898071289062,
+    "step1_extraction_ms": 0.0,
+    "step2_explicit_detection_ms": 0.0,
+    "step3_kb_retrieval_ms": 0.0,
+    "step4_llm_classification_ms": 108.79898071289062,
+    "step5_dialogue_update_ms": 0.0,
+    "step6_phase2_generation_ms": 0.0,
+    "classification_result": {
+      "fine_label": null,
+      "confidence": 0.0,
+      "incident_type": "Unknown"
+    },
+    "phase2_status": "no_playbook",
+    "playbooks_found": 0,
+    "steps_generated": 0,
+    "test_case": 10,
+    "description": "Logging failure - security events not recorded"
+  }
+]

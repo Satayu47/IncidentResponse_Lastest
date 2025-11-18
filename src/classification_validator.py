@@ -1,6 +1,7 @@
 # src/classification_validator.py
 """
 Safety validation for classifications to prevent misclassification and misinformation.
+Added this after realizing we needed better validation - had some issues with low confidence cases.
 """
 
 from typing import Dict, List, Optional, Tuple

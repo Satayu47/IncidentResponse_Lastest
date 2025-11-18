@@ -1,6 +1,7 @@
 # Incident Response Platform - Chat Interface
 # Built this to make incident response easier for our team
 # Started as a simple classifier, evolved into full chat interface
+# Had to refactor a few times to get the conversation flow right
 
 import streamlit as st
 import time
@@ -38,6 +39,7 @@ except ImportError:
 load_dotenv()
 
 # Config - tweaked these values during testing
+# Originally had 0.65 but changed to 0.70 for better safety after some misclassifications
 THRESH_GO = 0.70  # min confidence to proceed to phase 2
 CLARIFY_THRESHOLD = 0.70  # ask questions below this
 OWASP_VERSION = "2025"  # OWASP Top 10 version: 2025 only

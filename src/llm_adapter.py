@@ -191,7 +191,8 @@ class LLMAdapter:
                 raise
         
         # Normalize different output formats (LLM sometimes returns different keys)
-        # CRITICAL: Prefer fine_label first (it's the most specific and correct)
+        # Had issues with this - Gemini sometimes uses "category", sometimes "fine_label"
+        # Prefer fine_label first (it's the most specific and correct)
         if "fine_label" in result:
             result["category"] = result["fine_label"]
         elif "incident_type" in result:

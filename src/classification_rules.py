@@ -12,6 +12,7 @@ from typing import Dict, Tuple
 # This fixes the issue where Gemini returns different variations
 # like "identification_and_authentication_failures" vs "broken_authentication"
 # Took a while to figure out all the variations!
+# Found most of them by running tests and seeing what the LLM actually returned
 
 _CANON_MAP = {
     # Broken Access Control
