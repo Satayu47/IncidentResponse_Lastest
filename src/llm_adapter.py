@@ -75,12 +75,12 @@ class LLMAdapter:
         
         # Check API key format if provided
         if api_key:
-            if api_key.startswith("sk-"):
+            if api_key.startswith("sk-or-v1-") or api_key.startswith("sk-ant-"):
+                return "anthropic"
+            elif api_key.startswith("sk-"):
                 return "openai"
             elif api_key.startswith("AIza"):
                 return "gemini"
-            elif api_key.startswith("sk-ant-"):
-                return "anthropic"
         
         # Default to gemini for backwards compatibility
         return "gemini"
@@ -156,15 +156,39 @@ class LLMAdapter:
                     raise ValueError(f"Could not parse JSON from Claude response: {content[:200]}")
         else:
             # Gemini API call
-            response = self.model.generate_content(
-                prompt,
-                generation_config=genai.GenerationConfig(
-                    temperature=0.1,  # Slight randomness for better semantic understanding
-                    top_p=0.95,
-                    response_mime_type="application/json"
+            try:
+                response = self.model.generate_content(
+                    prompt,
+                    generation_config=genai.GenerationConfig(
+                        temperature=0.1,  # Slight randomness for better semantic understanding
+                        top_p=0.95,
+                        response_mime_type="application/json"
+                    )
                 )
-            )
-            result = json.loads(response.text)
+                # Handle potential JSON parsing errors
+                try:
+                    result = json.loads(response.text)
+                except json.JSONDecodeError as e:
+                    # Try to extract JSON from response if it's wrapped in text
+                    import re
+                    json_match = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}', response.text, re.DOTALL)
+                    if json_match:
+                        result = json.loads(json_match.group())
+                    else:
+                        # If JSON parsing completely fails, return a safe fallback
+                        print(f"Warning: Failed to parse JSON from Gemini response: {response.text[:200]}")
+                        return {
+                            "fine_label": "other",
+                            "category": "other",
+                            "confidence": 0.3,
+                            "rationale": "LLM returned invalid JSON format",
+                            "incident_type": "Unknown Incident",
+                            "owasp_version": "2025"
+                        }
+            except Exception as e:
+                # API call failed completely
+                print(f"Error calling Gemini API: {str(e)}")
+                raise
         
         # Normalize different output formats (LLM sometimes returns different keys)
         # CRITICAL: Prefer fine_label first (it's the most specific and correct)

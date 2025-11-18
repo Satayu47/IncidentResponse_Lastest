@@ -26,9 +26,16 @@ env/
 ENV/
 .venv
 
-# Environment Variables
+# Environment Variables & API Keys
 .env
 .env.local
+.env.*
+*.env
+*_key.txt
+*_api_key.txt
+*secret*
+*password*
+*credentials*
 
 # IDE
 .vscode/

@@ -20,16 +20,16 @@ from .playbook_utils import (
 try:
     from owasp_compatibility import get_playbook_file, normalize_owasp_id
 except ImportError:
-    # Fallback if module not found
-    def get_playbook_file(owasp_id: str, version: str = "2025") -> str:
-        """Fallback playbook file mapping."""
+    # Fallback if module not found - OWASP 2025 only
+    def get_playbook_file(owasp_id: str) -> str:
+        """Fallback playbook file mapping for OWASP 2025."""
         mapping = {
             "A01": "A01_broken_access_control",
-            "A02": "A05_misconfiguration",  # 2025 A02 = 2021 A05
-            "A03": "A06_vulnerable_components",  # 2025 A03 = 2021 A06
-            "A04": "A02_cryptographic_failures",  # 2025 A04 = 2021 A02
-            "A05": "A03_injection",  # 2025 A05 = 2021 A03
-            "A06": "A04_insecure_design",  # 2025 A06 = 2021 A04
+            "A02": "A05_misconfiguration",
+            "A03": "A06_vulnerable_components",
+            "A04": "A02_cryptographic_failures",
+            "A05": "A03_injection",
+            "A06": "A04_insecure_design",
             "A07": "A07_authentication_failures",
             "A08": "A08_data_integrity",
             "A09": "A09_logging_failures",
@@ -37,13 +37,13 @@ except ImportError:
         }
         return mapping.get(owasp_id, f"{owasp_id}_unknown")
     
-    def normalize_owasp_id(owasp_id: str, target_version: str = "2025") -> tuple:
-        """Fallback normalization."""
+    def normalize_owasp_id(owasp_id: str) -> tuple:
+        """Fallback normalization for OWASP 2025."""
         if ":" in owasp_id:
             owasp_id = owasp_id.split(":")[0].strip()
         if " " in owasp_id:
             owasp_id = owasp_id.split()[0].strip()
-        return owasp_id, get_playbook_file(owasp_id, target_version)
+        return owasp_id, get_playbook_file(owasp_id)
 
 
 # Map your Phase-1 labels to concrete playbook IDs
@@ -54,7 +54,7 @@ INCIDENT_TO_PLAYBOOK: Dict[str, List[str]] = {
     "Authentication Failures": ["A07_authentication_failures"],
     "Sensitive Data Exposure": ["A02_cryptographic_failures"],
     "Cryptographic Failures": ["A02_cryptographic_failures"],
-    "Misconfiguration": ["A05_security_misconfiguration"],
+    "Misconfiguration": ["A05_misconfiguration"],
     "Vulnerable Components": ["A06_vulnerable_components"],
     "Software Supply Chain Failures": ["A06_vulnerable_components"],
     "Insecure Design": ["A06_vulnerable_components"],
@@ -73,8 +73,8 @@ INCIDENT_TO_PLAYBOOK: Dict[str, List[str]] = {
     "sensitive_data_exposure": ["A02_cryptographic_failures"],
     "cryptographic_failures": ["A02_cryptographic_failures"],
 
-    "security_misconfiguration": ["A05_security_misconfiguration"],
-    "misconfig": ["A05_security_misconfiguration"],
+    "security_misconfiguration": ["A05_misconfiguration"],
+    "misconfig": ["A05_misconfiguration"],
 
     "vulnerable_components": ["A06_vulnerable_components"],
     "vulnerable_component": ["A06_vulnerable_components"],
@@ -87,15 +87,19 @@ INCIDENT_TO_PLAYBOOK: Dict[str, List[str]] = {
     "Software Supply Chain Failures": ["A06_vulnerable_components"],
     "Insecure Design": ["A06_vulnerable_components"],  # Fallback
     
-    # Data Integrity (A08:2025)
+    # A08:2025 - Software or Data Integrity Failures
     "data_integrity": ["A08_data_integrity"],
     "integrity_failures": ["A08_data_integrity"],
     "Software or Data Integrity Failures": ["A08_data_integrity"],
     
-    # Logging & Alerting Failures (A09:2025)
+    # A09:2025 - Logging & Alerting Failures
     "logging_failures": ["A09_logging_failures"],
     "monitoring_failures": ["A09_logging_failures"],
     "Logging & Alerting Failures": ["A09_logging_failures"],
+    
+    # A10:2025 - Mishandling of Exceptional Conditions
+    "exceptional_conditions": ["A10_ssrf"],
+    "Mishandling of Exceptional Conditions": ["A10_ssrf"],
 }
 
 

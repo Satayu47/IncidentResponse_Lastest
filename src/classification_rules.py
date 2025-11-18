@@ -198,15 +198,16 @@ class ClassificationRules:
     @classmethod
     def get_owasp_display_name(cls, label: str, show_specific: bool = True, version: str = "2025") -> str:
         """
-        Get human-readable display name for a classification.
+        Get OWASP 2025 display name for a label.
+        Note: version parameter kept for API compatibility but only 2025 is supported.
         
         Args:
             label: Classification label
             show_specific: If True, include specific type (e.g., "SQL Injection")
-            version: OWASP version ("2021" or "2025", default: "2025")
+            version: OWASP version (default: "2025", only 2025 is supported)
         
         Returns:
-            Display string like "A05:2025 - Injection (SQL Injection)" or "A03:2021 - Injection (SQL Injection)"
+            Display string like "A05:2025 - Injection (SQL Injection)"
         """
         # First canonicalize the label
         canonical = canonicalize_label(label)
@@ -230,16 +231,7 @@ class ClassificationRules:
             else:
                 owasp_id, owasp_name = ("A06", "Insecure Design")  # Last resort
         
-        # Convert to 2021 if needed
-        if version == "2021":
-            try:
-                from owasp_compatibility import convert_2025_to_2021, OWASP_2021
-                owasp_id_2021 = convert_2025_to_2021(owasp_id)
-                owasp_name_2021 = OWASP_2021.get(owasp_id_2021, owasp_name)
-                owasp_id = owasp_id_2021
-                owasp_name = owasp_name_2021
-            except:
-                pass  # Fallback to 2025 if conversion fails
+        # OWASP 2025 only - no version conversion needed
         
         if show_specific and label:
             specific = label.replace("_", " ").title()

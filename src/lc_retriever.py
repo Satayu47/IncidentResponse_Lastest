@@ -6,22 +6,149 @@ Uses vector embeddings for semantic search over security documentation.
 
 from typing import List, Dict, Any, Optional
 import os
+from pathlib import Path
+
+try:
+    from langchain.text_splitter import RecursiveCharacterTextSplitter
+    from langchain_google_genai import GoogleGenerativeAIEmbeddings
+    from langchain_community.vectorstores import FAISS
+    from langchain_core.documents import Document
+    from langchain_core.retrievers import BaseRetriever
+    LANGCHAIN_AVAILABLE = True
+except ImportError:
+    # Try older import paths for compatibility
+    try:
+        from langchain.text_splitter import RecursiveCharacterTextSplitter
+        from langchain.embeddings import GoogleGenerativeAIEmbeddings
+        from langchain.vectorstores import FAISS
+        from langchain.schema import Document
+        from langchain.retrievers import BaseRetriever
+        LANGCHAIN_AVAILABLE = True
+    except ImportError:
+        LANGCHAIN_AVAILABLE = False
+        # Fallback types for type hints
+        Document = Any
+        BaseRetriever = Any
 
 
 class KnowledgeBaseRetriever:
     """
-    Simple knowledge base retriever for security documentation.
-    In production, this would use a vector store like FAISS or Chroma.
+    Real LangChain-based knowledge base retriever for security documentation.
+    Uses FAISS vector store with Google Gemini embeddings for semantic search.
     """
     
-    def __init__(self, kb_path: Optional[str] = None):
-        self.kb_path = kb_path
-        # In a real implementation, you'd load and index documents here
-        self.mock_kb = self._build_mock_kb()
+    def __init__(self, kb_path: Optional[str] = None, use_cache: bool = True):
+        """
+        Initialize the knowledge base retriever.
+        
+        Args:
+            kb_path: Optional path to save/load vector store cache
+            use_cache: Whether to cache the vector store to disk
+        """
+        self.kb_path = kb_path or ".kb_cache"
+        self.use_cache = use_cache
+        self.vector_store = None
+        self.embeddings = None
+        self.retriever = None
+        
+        if not LANGCHAIN_AVAILABLE:
+            print("WARNING: LangChain not available. Install with: pip install langchain langchain-community langchain-google-genai faiss-cpu")
+            print("   Falling back to mock implementation.")
+            self._use_mock = True
+            self.mock_kb = self._build_mock_kb()
+        else:
+            self._use_mock = False
+            self._initialize_vector_store()
+    
+    def _initialize_vector_store(self):
+        """Initialize the LangChain vector store with embeddings."""
+        try:
+            # Initialize embeddings using Google Gemini
+            api_key = os.getenv("GEMINI_API_KEY")
+            if not api_key:
+                print("WARNING: GEMINI_API_KEY not found. Using mock implementation.")
+                self._use_mock = True
+                self.mock_kb = self._build_mock_kb()
+                return
+            
+            self.embeddings = GoogleGenerativeAIEmbeddings(
+                model="models/embedding-001",
+                google_api_key=api_key
+            )
+            
+            # Try to load cached vector store
+            cache_path = Path(self.kb_path)
+            if self.use_cache and cache_path.exists() and (cache_path / "index.faiss").exists():
+                try:
+                    print("Loading cached knowledge base vector store...")
+                    self.vector_store = FAISS.load_local(
+                        str(cache_path),
+                        self.embeddings,
+                        allow_dangerous_deserialization=True
+                    )
+                    print("Loaded cached vector store")
+                except Exception as e:
+                    print(f"WARNING: Failed to load cache: {e}. Rebuilding...")
+                    self._build_and_save_vector_store()
+            else:
+                self._build_and_save_vector_store()
+            
+            # Create retriever
+            if self.vector_store:
+                self.retriever = self.vector_store.as_retriever(
+                    search_type="similarity",
+                    search_kwargs={"k": 3}
+                )
+                
+        except Exception as e:
+            print(f"WARNING: Error initializing LangChain: {e}")
+            print("   Falling back to mock implementation.")
+            self._use_mock = True
+            self.mock_kb = self._build_mock_kb()
+    
+    def _build_and_save_vector_store(self):
+        """Build the vector store from knowledge base documents and save it."""
+        print("Building knowledge base vector store...")
+        
+        # Get knowledge base documents
+        kb_docs = self._build_mock_kb()
+        
+        # Convert to LangChain Documents
+        documents = []
+        for entry in kb_docs:
+            doc = Document(
+                page_content=entry["content"],
+                metadata=entry["metadata"]
+            )
+            documents.append(doc)
+        
+        # Split documents into chunks for better retrieval
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=500,
+            chunk_overlap=50,
+            length_function=len
+        )
+        split_docs = text_splitter.split_documents(documents)
+        
+        # Create FAISS vector store
+        self.vector_store = FAISS.from_documents(
+            split_docs,
+            self.embeddings
+        )
+        
+        # Save to disk for future use
+        if self.use_cache:
+            cache_path = Path(self.kb_path)
+            cache_path.mkdir(parents=True, exist_ok=True)
+            try:
+                self.vector_store.save_local(str(cache_path))
+                print(f"Saved vector store to {cache_path}")
+            except Exception as e:
+                print(f"WARNING: Failed to save cache: {e}")
     
     def retrieve(self, query: str, top_k: int = 3) -> List[Dict[str, Any]]:
         """
-        Retrieve relevant knowledge base entries.
+        Retrieve relevant knowledge base entries using semantic search.
         
         Args:
             query: Search query
@@ -30,7 +157,36 @@ class KnowledgeBaseRetriever:
         Returns:
             List of relevant KB entries with scores
         """
-        # Simple keyword-based mock retrieval
+        if self._use_mock or not self.retriever:
+            return self._mock_retrieve(query, top_k)
+        
+        try:
+            # Use LangChain retriever for semantic search
+            docs = self.retriever.get_relevant_documents(query)
+            
+            results = []
+            for doc in docs[:top_k]:
+                # Extract metadata and content
+                metadata = doc.metadata.copy()
+                content = doc.page_content
+                
+                # Calculate relevance score (simplified - LangChain doesn't always return scores)
+                # In a real implementation, you might use similarity_search_with_score
+                results.append({
+                    "content": content,
+                    "metadata": metadata,
+                    "score": 0.85,  # Default score for semantic matches
+                })
+            
+            return results
+            
+        except Exception as e:
+            print(f"WARNING: Error in LangChain retrieval: {e}")
+            print("   Falling back to mock retrieval.")
+            return self._mock_retrieve(query, top_k)
+    
+    def _mock_retrieve(self, query: str, top_k: int = 3) -> List[Dict[str, Any]]:
+        """Fallback mock retrieval using keyword matching."""
         query_lower = query.lower()
         results = []
         
@@ -43,12 +199,11 @@ class KnowledgeBaseRetriever:
                     "score": score,
                 })
         
-        # Sort by score and return top_k
         results.sort(key=lambda x: x["score"], reverse=True)
         return results[:top_k]
     
     def _compute_relevance(self, query: str, content: str) -> float:
-        """Simple relevance scoring based on keyword overlap."""
+        """Simple relevance scoring based on keyword overlap (fallback)."""
         query_words = set(query.split())
         content_words = set(content.split())
         

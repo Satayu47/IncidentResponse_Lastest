@@ -1,0 +1,79 @@
+# Step-by-Step: Get Free Claude API Key
+
+## 🎯 Quick Guide (5 minutes)
+
+### Step 1: Go to Anthropic Console
+**URL:** https://console.anthropic.com/
+
+### Step 2: Sign Up
+- Click "Sign Up" or "Get Started"
+- Use your Google account (easiest) or email
+- **No credit card required!**
+
+### Step 3: Get Free Credit
+- You'll automatically receive **$5 free credit**
+- This is enough for ~50 test cases (costs ~$0.50)
+- No payment method needed
+
+### Step 4: Create API Key
+1. Go to **"API Keys"** section in dashboard
+2. Click **"Create Key"**
+3. Give it a name (e.g., "D3 Experiment")
+4. Copy the key (starts with `sk-ant-`)
+5. **Save it somewhere safe!** (You can't see it again)
+
+### Step 5: Set Environment Variable
+```powershell
+$env:ANTHROPIC_API_KEY = "sk-ant-your-actual-key-here"
+```
+
+### Step 6: Test It
+```powershell
+python scripts/test_claude_key.py
+```
+
+---
+
+## ✅ What You Get
+
+- **$5 free credit** (no credit card needed)
+- **Enough for 50 test cases** (~$0.50 cost)
+- **Strong AI baseline** (Claude 3.5 Sonnet)
+- **Fair comparison** for your report
+
+---
+
+## 🚨 Important Notes
+
+1. **Free credit expires** after some time (usually 30 days)
+2. **Use it soon** after getting it
+3. **50 test cases** = about $0.50, so $5 is plenty
+4. **No charges** if you stay within free credit
+
+---
+
+## 📝 After You Get the Key
+
+Once you have the key, run:
+
+```powershell
+# 1. Set the key
+$env:ANTHROPIC_API_KEY = "sk-ant-your-key"
+
+# 2. Make sure Gemini key is set
+$env:GEMINI_API_KEY = "your-gemini-key"
+
+# 3. Test both keys
+python scripts/test_claude_key.py
+
+# 4. Run the experiment
+python scripts/run_llm_baseline_experiment.py --baseline claude
+
+# 5. Generate visualizations
+python scripts/visualize_llm_comparison.py reports/llm_baseline_comparison_claude_*.json
+```
+
+---
+
+**That's it! Free AI baseline in 5 minutes!** 🎉
+

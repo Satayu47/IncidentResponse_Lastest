@@ -786,8 +786,8 @@ print(f"Playbooks: {len(result['playbooks'])}, DAG nodes: {result['merged_dag'].
 - **Combined System**: >90% accuracy with multi-turn dialogue
 
 ### Scalability
-- **Playbooks**: 8 OWASP categories implemented
-- **Max Merge**: Tested with all 8 playbooks → valid DAG
+- **Playbooks**: 10 OWASP 2025 categories implemented
+- **Max Merge**: Tested with all 10 playbooks → valid DAG
 - **Node Deduplication**: ~30% reduction in merged graphs (SHA1 algorithm)
 
 ---
@@ -833,7 +833,7 @@ Every action is logged with:
 ## 🎯 Key Success Metrics
 
 ### ✅ Completeness
-- [x] All 8 OWASP playbooks implemented
+- [x] All 10 OWASP 2025 playbooks implemented
 - [x] All 6 NIST IR phases covered
 - [x] Both single-label and multi-label support
 - [x] Full DAG merging with deduplication

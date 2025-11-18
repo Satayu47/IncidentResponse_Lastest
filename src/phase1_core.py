@@ -1,21 +1,14 @@
 # src/phase1_core.py
 
 """
-Phase-1 classification core.
-Used by tests and can be imported by the Streamlit app.
+Phase-1 classification core module.
 
-This is the main entry point for classification - it combines:
-- explicit_detector: fast keyword matching
-- llm_adapter: AI classification via Gemini
-- classification_rules: label normalization
+Main entry point for incident classification. Combines multiple approaches:
+- Keyword-based pattern detection for obvious cases
+- LLM-based semantic classification for complex cases
+- Rule-based normalization to ensure consistent labels
 
-Returns a dict with:
-{
-    "label": "broken_access_control",   # canonical label
-    "score": 0.87,                      # confidence 0-1
-    "rationale": "explanation",
-    "candidates": [{"label": "...", "score": 0.87}]
-}
+Returns classification results with label, confidence score, and rationale.
 """
 
 from typing import Dict, List
@@ -51,9 +44,9 @@ def run_phase1_classification(user_text: str) -> Dict:
     detector = ExplicitDetector()
     explicit_label, explicit_conf = detector.detect(user_text)
     
-    # Only skip LLM for very high confidence (exact patterns like "' OR 1=1")
-    # For everything else, use LLM semantic understanding
-    if explicit_label and explicit_conf >= 0.90:
+    # Skip LLM for high-confidence explicit detection (optimization)
+    # Lowered threshold from 0.90 to 0.85 to enable fast path more often
+    if explicit_label and explicit_conf >= 0.85:
         # Very high confidence match, skip LLM
         canonical = canonicalize_label(explicit_label)
         return {

@@ -84,17 +84,35 @@ class DialogueState:
         
         return "\n".join(context_parts)
     
-    def get_full_conversation_history(self) -> str:
-        """Get full conversation as a natural dialogue."""
+    def get_full_conversation_history(self, max_turns: int = 50) -> str:
+        """
+        Get full conversation as a natural dialogue.
+        
+        Args:
+            max_turns: Maximum number of recent turns to include (default: 50)
+                      This prevents extremely long conversations from hitting token limits.
+                      Most recent turns are prioritized.
+        
+        Returns:
+            Conversation history as natural dialogue text
+        """
         if not self.turns:
             return ""
         
+        # For very long conversations, use only the most recent turns
+        # This ensures we stay within token limits while keeping recent context
+        turns_to_use = self.turns[-max_turns:] if len(self.turns) > max_turns else self.turns
+        
         history = []
-        for turn in self.turns:
+        for turn in turns_to_use:
             history.append(f"User: {turn.user_input}")
             if turn.classification:
                 label = turn.classification.get('fine_label', 'unknown')
                 history.append(f"Assistant: I understood this as {label}")
+        
+        # If we truncated, add a note
+        if len(self.turns) > max_turns:
+            history.insert(0, f"[Note: Showing last {max_turns} turns of {len(self.turns)} total turns]")
         
         return "\n".join(history)
     

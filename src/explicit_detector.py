@@ -37,6 +37,9 @@ class ExplicitDetector:
             (r"\bprivileges?.*escalat", "broken_access_control", 0.85),
             (r"\bidor\b", "broken_access_control", 0.85),
             (r"\bunauthorized access", "broken_access_control", 0.80),
+            (r"\bbroken access control", "broken_access_control", 0.90),
+            (r"\ballows unauthorized.*data access", "broken_access_control", 0.90),
+            (r"\bunauthorized.*data access", "broken_access_control", 0.85),
             # Edge cases: URL manipulation and indirect descriptions
             (r"\bchanged.*number.*url.*saw.*(profile|account|data|information)", "broken_access_control", 0.90),
             (r"\bchanged.*(id|number).*url.*see.*(other|another|someone)", "broken_access_control", 0.90),
@@ -65,7 +68,10 @@ class ExplicitDetector:
             (r"\bsql\s+error", "injection", 0.85),
             (r"\bsyntax error.*near.*or\b", "injection", 0.90),
             (r"\b(weird|strange|unusual).*syntax.*(login|web|page|form|input)", "injection", 0.80),  # "weird syntax on login"
+            (r"\b(weird|strange|unusual).*sy?yntax.*(login|web|page|form|input)", "injection", 0.80),  # Handle typo "syyntax"
             (r"\bsyntax.*(appear|show|display).*(login|web|page)", "injection", 0.80),  # "syntax appear on login"
+            (r"\bsy?yntax.*(appear|show|display).*(login|web|page)", "injection", 0.80),  # Handle typo "syyntax appear"
+            (r"\b(weird|strange).*sy?yntax.*appear.*(login|web|page)", "injection", 0.80),  # "weird syyntax appear on web login"
             (r"\b(weird|strange).*symbols?.*(login|web|page)", "injection", 0.75),  # "weird symbols on login"
             (r"\bweird.*(payload|input|query)", "injection", 0.75),
             (r";.*rm\s+-rf", "injection", 0.95),
@@ -86,6 +92,10 @@ class ExplicitDetector:
             (r"\b(weird|strange|unusual).*syntax.*(appear|show|display|looks)", "injection", 0.80),
             (r"\bsyntax.*(appear|show|display).*(login|page|form)", "injection", 0.80),
             (r"\b(table|tables).*disappeared.*database", "injection", 0.85),  # Could be SQL injection
+            (r"\b(table|tables?).*missing.*database", "injection", 0.85),  # "my table is missing from database"
+            (r"\bmy.*table.*missing.*database", "injection", 0.85),  # "my table is missing from database"
+            (r"\bdatabase.*table.*missing", "injection", 0.80),  # "database table missing"
+            (r"\btable.*missing.*from.*database", "injection", 0.85),  # "table missing from database"
             (r"\btype.*special.*character.*(search|input|form).*page.*(break|crash|error)", "injection", 0.80),
             (r"\berror.*message.*show.*(database|db|table|structure)", "injection", 0.85),
             (r"\b(database|db).*error.*show.*(structure|table|schema)", "injection", 0.85),
@@ -122,6 +132,9 @@ class ExplicitDetector:
             (r"\b(wrong|incorrect).*password.*(many|multiple).*time.*(no|not).*lock.*out", "broken_authentication", 0.90),
             (r"\bforgot.*password.*still.*access.*account", "broken_authentication", 0.85),  # Could be session issue
             (r"\bforgot.*password.*can still.*access", "broken_authentication", 0.85),
+            (r"\bauthentication failure", "broken_authentication", 0.90),
+            (r"\bmultiple failed login attempts", "broken_authentication", 0.90),
+            (r"\bfailed login attempts", "broken_authentication", 0.85),
             (r"\b(doesn't|does not|not).*require.*(two|2).*factor.*(auth|authentication).*admin", "broken_authentication", 0.90),
             (r"\b(no|missing|not).*two.*factor.*(auth|authentication).*admin", "broken_authentication", 0.90),
             (r"\blogged.*out.*(go back|return|visit).*still.*logged.*in", "broken_authentication", 0.90),
@@ -145,6 +158,8 @@ class ExplicitDetector:
             (r"\bnational id.*full.*frontend", "sensitive_data_exposure", 0.90),
             (r"\bdata leak", "sensitive_data_exposure", 0.85),
             (r"\bsensitive data", "sensitive_data_exposure", 0.80),
+            (r"\bsecurity misconfiguration.*exposes sensitive data", "sensitive_data_exposure", 0.90),
+            (r"\bexposes sensitive data", "sensitive_data_exposure", 0.85),
             
             # ===== CRYPTOGRAPHIC FAILURES (high confidence patterns) =====
             (r"\btokens?.*md5.*without salt", "cryptographic_failures", 0.95),
@@ -241,6 +256,16 @@ class ExplicitDetector:
             (r"\bcve-\d{4}-\d{4,}", "vulnerable_components", 0.90),
             (r"\boutdated (library|component)", "vulnerable_components", 0.85),
             (r"\bknown vulnerability", "vulnerable_components", 0.85),
+            
+            # ===== SSRF (Server-Side Request Forgery) =====
+            (r"\bssrf\b", "injection", 0.90),
+            (r"\bserver.*side.*request.*forgery", "injection", 0.90),
+            (r"\bssrf attack", "injection", 0.90),
+            
+            # ===== LOGGING FAILURES =====
+            (r"\blogging failure", "security_misconfiguration", 0.85),
+            (r"\bsecurity events.*not.*record", "security_misconfiguration", 0.85),
+            (r"\bsecurity.*events.*not.*logged", "security_misconfiguration", 0.85),
         ]
     
     def detect(self, text: str) -> Tuple[Optional[str], float]:
