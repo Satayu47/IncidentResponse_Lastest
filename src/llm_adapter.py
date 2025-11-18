@@ -497,6 +497,11 @@ Guidelines:
    - However, if encryption keywords are present, prioritize A04 even if mentioned second
    
    **CRITICAL: When MULTIPLE security issues are mentioned in one description:**
+   - You MUST detect ALL security issues mentioned, not just the first one
+   - Return a "labels" array with ALL detected incident types
+   - Example: "sql injection and cryptographic attack" → Return BOTH "injection" AND "cryptographic_failures" in labels array
+   - Example: "broken access control and weak encryption" → Return BOTH "broken_access_control" AND "cryptographic_failures" in labels array
+   - The "fine_label" should be the PRIMARY/MOST CRITICAL issue, but "labels" should include ALL issues
    - Look for connecting words: "and", "also", "plus", "combined with", "as well as"
    - If multiple issues are explicitly mentioned, classify as the FIRST or MOST SEVERE issue
    - Examples:
@@ -524,10 +529,15 @@ Return JSON with:
 {
   "incident_type": "<OWASP 2025 category like 'A05:2025 - Injection' or 'A01:2025 - Broken Access Control' or 'A04:2025 - Cryptographic Failures' or 'A07:2025 - Authentication Failures'>",
   "fine_label": "<specific type: broken_access_control, sql_injection, xss, broken_authentication, cryptographic_failures, etc.>",
+  "labels": ["<array of ALL detected incident types, e.g., ['injection', 'cryptographic_failures'] if multiple issues are mentioned>"],
   "confidence": <float 0-1>,
   "rationale": "<brief step-by-step explanation. If ambiguous, mention other possibilities like 'could be SQL injection, but might also be admin mistake or database issue'>",
   "owasp_version": "2025"
 }
+
+**IMPORTANT:** If multiple security issues are mentioned (e.g., "sql injection and cryptographic attack"), include ALL of them in the "labels" array:
+- "labels": ["injection", "cryptographic_failures"]
+- The "fine_label" should be the PRIMARY issue, but "labels" must include ALL issues
 
 **IMPORTANT RULES:**
 1. ALWAYS use "2025" in incident_type (e.g., "A01:2025 - Broken Access Control")

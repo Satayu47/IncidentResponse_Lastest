@@ -572,9 +572,13 @@ Explanation:"""
                         score = float(cached_result.get("confidence", 0.0))
                         report_category = cached_result.get("incident_type", "Unknown")
                         rationale = cached_result.get("rationale", "Cached classification")
+                        llm_labels = cached_result.get("labels", [])  # Get labels from cache too
+                        if not isinstance(llm_labels, list):
+                            llm_labels = []
                     else:
                         # Cache miss - call LLM API
                         classification = None  # Initialize to avoid NameError
+                        llm_labels = []  # Initialize LLM labels
                         try:
                             # Build rich context for LLM with FULL conversation history
                             # Get both structured context and natural conversation flow
@@ -612,6 +616,11 @@ Explanation:"""
                             score = float(classification.get("confidence", 0.0))
                             report_category = classification.get("incident_type", "Unknown")
                             rationale = classification.get("rationale", "AI-based classification")
+                            
+                            # Extract labels array from LLM if present (multi-label support)
+                            llm_labels = classification.get("labels", [])
+                            if not isinstance(llm_labels, list):
+                                llm_labels = []
                             
                             # Cache the result for future use (performance optimization)
                             cache_entry = {
@@ -667,30 +676,56 @@ Explanation:"""
                 label = fine_label.lower().replace(" ", "_")
                 
                 # Detect multiple labels from user input for playbook merging
-                # Check if user mentioned multiple attack types
-                detected_labels = [label]  # Start with primary label
+                # Start with LLM labels if available, otherwise start with primary label
+                detected_labels = llm_labels if llm_labels else [label]
+                
+                # Ensure primary label is included
+                if label not in detected_labels:
+                    detected_labels.insert(0, label)
+                
                 text_lower = description_text.lower()
                 
+                # Enhanced keyword detection for additional labels (backup if LLM missed something)
+                # Check for multiple attack types mentioned with "and", "also", "plus", etc.
+                has_multiple_indicators = any(word in text_lower for word in [" and ", " also ", " plus ", " combined with ", " as well as "])
+                
                 # Check for additional labels mentioned in the text
-                if "broken access control" in text_lower or "access control" in text_lower or "unauthorized access" in text_lower or "idor" in text_lower:
+                if ("broken access control" in text_lower or "access control" in text_lower or 
+                    "unauthorized access" in text_lower or "idor" in text_lower or
+                    "can access" in text_lower and "admin" in text_lower):
                     if "broken_access_control" not in detected_labels:
                         detected_labels.append("broken_access_control")
                 
-                if "injection" in text_lower or "sql injection" in text_lower or "xss" in text_lower:
-                    if "injection" not in detected_labels and label != "injection":
+                if ("injection" in text_lower or "sql injection" in text_lower or 
+                    "xss" in text_lower or "command injection" in text_lower):
+                    if "injection" not in detected_labels and "sql_injection" not in detected_labels:
                         detected_labels.append("injection")
                 
-                if "authentication" in text_lower or "login" in text_lower or "session" in text_lower:
+                if ("authentication" in text_lower or "login" in text_lower or 
+                    "session" in text_lower or "password" in text_lower and "weak" in text_lower):
                     if "broken_authentication" not in detected_labels:
                         detected_labels.append("broken_authentication")
                 
-                if "cryptographic" in text_lower or "encryption" in text_lower or "plaintext" in text_lower:
+                # Enhanced cryptographic detection
+                if ("cryptographic" in text_lower or "encryption" in text_lower or 
+                    "plaintext" in text_lower or "unencrypted" in text_lower or
+                    "not encrypted" in text_lower or "without encryption" in text_lower or
+                    "crypto" in text_lower and "attack" in text_lower):
                     if "cryptographic_failures" not in detected_labels:
                         detected_labels.append("cryptographic_failures")
                 
                 if "misconfiguration" in text_lower or "misconfig" in text_lower:
                     if "security_misconfiguration" not in detected_labels:
                         detected_labels.append("security_misconfiguration")
+                
+                # Remove duplicates while preserving order
+                seen = set()
+                unique_labels = []
+                for lbl in detected_labels:
+                    if lbl not in seen:
+                        seen.add(lbl)
+                        unique_labels.append(lbl)
+                detected_labels = unique_labels
                 
                 # Calibrate confidence based on rationale quality
                 # If rationale is detailed and specific, boost confidence slightly
@@ -709,8 +744,19 @@ Explanation:"""
                         search_keywords = ["access control", "IDOR", "authorization"]
                     elif label == "broken_authentication":
                         search_keywords = ["authentication", "session"]
+                    elif label == "cryptographic_failures":
+                        search_keywords = ["cryptographic", "encryption", "TLS", "SSL"]
                     elif label == "security_misconfiguration":
                         search_keywords = ["misconfiguration", "default credentials"]
+                    
+                    # Also search for CVEs for all detected labels (multi-label support)
+                    for detected_label in detected_labels:
+                        if detected_label == "cryptographic_failures" and "cryptographic" not in [kw.lower() for kw in search_keywords]:
+                            search_keywords.extend(["cryptographic", "encryption"])
+                        elif detected_label == "injection" and "injection" not in [kw.lower() for kw in search_keywords]:
+                            search_keywords.extend(["SQL injection", "injection"])
+                        elif detected_label == "broken_access_control" and "access control" not in [kw.lower() for kw in search_keywords]:
+                            search_keywords.extend(["access control", "IDOR"])
                     
                     if search_keywords:
                         for keyword in search_keywords[:2]:  # Limit to 2 searches
