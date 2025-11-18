@@ -62,3 +62,10 @@ htmlcov/
 *.tmp
 *.bak
 *.swp
+
+# Reports (keep structure, ignore large JSON files)
+reports/*.json
+!reports/*_summary.json
+
+# Backup files
+backup/

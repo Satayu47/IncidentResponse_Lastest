@@ -76,10 +76,27 @@ class DialogueState:
         
         context_parts = []
         for i, turn in enumerate(self.turns, 1):
-            context_parts.append(f"Turn {i}: {turn.user_input}")
-            context_parts.append(f"  → Classified as: {turn.classification.get('fine_label', 'unknown')}")
+            context_parts.append(f"User said: {turn.user_input}")
+            if turn.classification:
+                label = turn.classification.get('fine_label', 'unknown')
+                conf = turn.classification.get('confidence', 0.0)
+                context_parts.append(f"  → I classified as: {label} (confidence: {conf:.2f})")
         
         return "\n".join(context_parts)
+    
+    def get_full_conversation_history(self) -> str:
+        """Get full conversation as a natural dialogue."""
+        if not self.turns:
+            return ""
+        
+        history = []
+        for turn in self.turns:
+            history.append(f"User: {turn.user_input}")
+            if turn.classification:
+                label = turn.classification.get('fine_label', 'unknown')
+                history.append(f"Assistant: I understood this as {label}")
+        
+        return "\n".join(history)
     
     def reset(self):
         """Clear all state for a new conversation."""

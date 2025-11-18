@@ -1,7 +1,13 @@
+import os
 import google.generativeai as genai
 
-# Configure with API key directly
-genai.configure(api_key='AIzaSyAUQhggX3GsJPwjR_x927v4PL8Qz1Vl7PA')
+# Configure with API key from environment variable
+api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    print("❌ ERROR: GEMINI_API_KEY not set. Please set it in your environment or .env file.")
+    exit(1)
+
+genai.configure(api_key=api_key)
 
 # Create model - using stable gemini-2.5-flash instead
 model = genai.GenerativeModel('models/gemini-2.5-flash')

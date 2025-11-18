@@ -1,0 +1,131 @@
+id: A08_data_integrity
+name: Software or Data Integrity Failures Response
+description: >
+  Response playbook for software and data integrity failures including
+  insecure CI/CD pipelines, unsigned updates, insecure deserialization,
+  and supply chain integrity violations.
+severity: high
+category: data_integrity
+
+phases:
+  - name: preparation
+    nodes:
+      - id: verify_integrity_checks
+        name: Verify Integrity Checks
+        description: Check if integrity verification mechanisms are in place
+        action: verify_integrity_checks
+        phase: preparation
+        
+      - id: review_cicd_pipeline
+        name: Review CI/CD Pipeline
+        description: Review CI/CD pipeline for security controls
+        action: review_cicd_pipeline
+        phase: preparation
+
+  - name: detection_analysis
+    nodes:
+      - id: identify_integrity_violation
+        name: Identify Integrity Violation
+        description: Determine the type and scope of integrity failure
+        action: identify_integrity_violation
+        phase: detection_analysis
+        depends_on: [verify_integrity_checks]
+        
+      - id: analyze_affected_components
+        name: Analyze Affected Components
+        description: Identify all components affected by integrity failure
+        action: analyze_affected_components
+        phase: detection_analysis
+        depends_on: [identify_integrity_violation]
+        
+      - id: assess_supply_chain_impact
+        name: Assess Supply Chain Impact
+        description: Evaluate impact on software supply chain
+        action: assess_supply_chain_impact
+        phase: detection_analysis
+        depends_on: [identify_integrity_violation]
+
+  - name: containment
+    nodes:
+      - id: isolate_compromised_systems
+        name: Isolate Compromised Systems
+        description: Isolate systems with integrity violations
+        action: isolate_system
+        phase: containment
+        depends_on: [analyze_affected_components]
+        
+      - id: disable_unsigned_updates
+        name: Disable Unsigned Updates
+        description: Disable automatic updates until integrity is verified
+        action: disable_unsigned_updates
+        phase: containment
+        depends_on: [identify_integrity_violation]
+        
+      - id: block_compromised_packages
+        name: Block Compromised Packages
+        description: Block installation of compromised packages
+        action: block_compromised_packages
+        phase: containment
+        depends_on: [assess_supply_chain_impact]
+
+  - name: eradication
+    nodes:
+      - id: remove_compromised_components
+        name: Remove Compromised Components
+        description: Remove or replace compromised software components
+        action: remove_compromised_components
+        phase: eradication
+        depends_on: [isolate_compromised_systems]
+        
+      - id: implement_integrity_verification
+        name: Implement Integrity Verification
+        description: Implement code signing and integrity checks
+        action: implement_integrity_verification
+        phase: eradication
+        depends_on: [remove_compromised_components]
+        
+      - id: secure_cicd_pipeline
+        name: Secure CI/CD Pipeline
+        description: Add security controls to CI/CD pipeline
+        action: secure_cicd_pipeline
+        phase: eradication
+        depends_on: [review_cicd_pipeline]
+
+  - name: recovery
+    nodes:
+      - id: restore_from_verified_source
+        name: Restore from Verified Source
+        description: Restore systems from verified, signed sources
+        action: restore_from_verified_source
+        phase: recovery
+        depends_on: [implement_integrity_verification]
+        
+      - id: validate_integrity
+        name: Validate Integrity
+        description: Verify integrity of restored components
+        action: validate_integrity
+        phase: recovery
+        depends_on: [restore_from_verified_source]
+        
+      - id: re_enable_updates
+        name: Re-enable Updates
+        description: Re-enable updates with integrity verification
+        action: re_enable_updates
+        phase: recovery
+        depends_on: [validate_integrity]
+
+  - name: post_incident
+    nodes:
+      - id: document_integrity_failure
+        name: Document Integrity Failure
+        description: Document the integrity failure and response
+        action: document_incident
+        phase: post_incident
+        
+      - id: update_security_policies
+        name: Update Security Policies
+        description: Update policies for software integrity
+        action: update_security_policies
+        phase: post_incident
+        depends_on: [document_integrity_failure]
+

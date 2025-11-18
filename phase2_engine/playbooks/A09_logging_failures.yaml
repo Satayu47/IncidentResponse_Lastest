@@ -1,0 +1,137 @@
+id: A09_logging_failures
+name: Logging & Alerting Failures Response
+description: >
+  Response playbook for logging and alerting failures including
+  missing audit logs, insufficient monitoring, and late detection of breaches.
+severity: medium
+category: logging_failures
+
+phases:
+  - name: preparation
+    nodes:
+      - id: verify_logging_config
+        name: Verify Logging Configuration
+        description: Check if logging is properly configured
+        action: verify_logging_config
+        phase: preparation
+        
+      - id: review_monitoring_setup
+        name: Review Monitoring Setup
+        description: Review monitoring and alerting systems
+        action: review_monitoring_setup
+        phase: preparation
+
+  - name: detection_analysis
+    nodes:
+      - id: identify_logging_gaps
+        name: Identify Logging Gaps
+        description: Identify missing or insufficient logging
+        action: identify_logging_gaps
+        phase: detection_analysis
+        depends_on: [verify_logging_config]
+        
+      - id: assess_monitoring_coverage
+        name: Assess Monitoring Coverage
+        description: Evaluate monitoring coverage and alert effectiveness
+        action: assess_monitoring_coverage
+        phase: detection_analysis
+        depends_on: [review_monitoring_setup]
+        
+      - id: analyze_detection_delay
+        name: Analyze Detection Delay
+        description: Determine how long the breach went undetected
+        action: analyze_detection_delay
+        phase: detection_analysis
+        depends_on: [identify_logging_gaps]
+
+  - name: containment
+    nodes:
+      - id: enable_enhanced_logging
+        name: Enable Enhanced Logging
+        description: Enable comprehensive logging immediately
+        action: enable_enhanced_logging
+        phase: containment
+        depends_on: [identify_logging_gaps]
+        
+      - id: activate_emergency_alerts
+        name: Activate Emergency Alerts
+        description: Activate emergency alerting mechanisms
+        action: activate_emergency_alerts
+        phase: containment
+        depends_on: [assess_monitoring_coverage]
+        
+      - id: collect_existing_logs
+        name: Collect Existing Logs
+        description: Collect and preserve all available logs
+        action: collect_existing_logs
+        phase: containment
+        depends_on: [identify_logging_gaps]
+
+  - name: eradication
+    nodes:
+      - id: implement_comprehensive_logging
+        name: Implement Comprehensive Logging
+        description: Implement logging for all critical events
+        action: implement_comprehensive_logging
+        phase: eradication
+        depends_on: [enable_enhanced_logging]
+        
+      - id: configure_alerting_rules
+        name: Configure Alerting Rules
+        description: Configure alerting rules for security events
+        action: configure_alerting_rules
+        phase: eradication
+        depends_on: [activate_emergency_alerts]
+        
+      - id: integrate_siem
+        name: Integrate SIEM
+        description: Integrate with Security Information and Event Management
+        action: integrate_siem
+        phase: eradication
+        depends_on: [implement_comprehensive_logging]
+
+  - name: recovery
+    nodes:
+      - id: validate_logging_system
+        name: Validate Logging System
+        description: Verify logging system is working correctly
+        action: validate_logging_system
+        phase: recovery
+        depends_on: [implement_comprehensive_logging]
+        
+      - id: test_alerting_system
+        name: Test Alerting System
+        description: Test alerting system with sample events
+        action: test_alerting_system
+        phase: recovery
+        depends_on: [configure_alerting_rules]
+        
+      - id: restore_log_retention
+        name: Restore Log Retention
+        description: Ensure proper log retention policies
+        action: restore_log_retention
+        phase: recovery
+        depends_on: [validate_logging_system]
+
+  - name: post_incident
+    nodes:
+      - id: document_logging_failures
+        name: Document Logging Failures
+        description: Document logging and monitoring failures
+        action: document_incident
+        phase: post_incident
+        
+      - id: establish_logging_standards
+        name: Establish Logging Standards
+        description: Establish standards for logging and monitoring
+        action: establish_logging_standards
+        phase: post_incident
+        depends_on: [document_logging_failures]
+        
+      - id: schedule_regular_reviews
+        name: Schedule Regular Reviews
+        description: Schedule regular reviews of logging and monitoring
+        action: schedule_regular_reviews
+        phase: post_incident
+        depends_on: [establish_logging_standards]
+

@@ -1,13 +1,13 @@
-# Incident Response Platform
-# Main Streamlit app - combines classification (Phase-1) and playbook execution (Phase-2)
-# Started with OpenAI but switched to Gemini for better results
+# Incident Response Platform - Chat Interface
+# Built this to make incident response easier for our team
+# Started as a simple classifier, evolved into full chat interface
 
 import streamlit as st
 import time
 import os
 from dotenv import load_dotenv
 
-# Phase-1 imports
+# Phase-1 stuff
 from src import (
     LLMAdapter,
     SecurityExtractor,
@@ -20,35 +20,40 @@ from src import (
     format_confidence_badge,
 )
 
-# Phase-2 import
+# Phase-2 - playbook execution
 from phase2_engine.core.runner_bridge import run_phase2_from_incident
 
-# Execution and CVE imports
+# Other utilities
 from src.execution_simulator import ExecutionSimulator
 from src.cve_service import CVEService
+from datetime import datetime
+import test_cases
 
-# Load environment variables
 load_dotenv()
 
-# Configuration
-THRESH_GO = 0.65  # Confidence threshold for Phase-2
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# Config - tweaked these values during testing
+THRESH_GO = 0.65  # min confidence to proceed to phase 2
+CLARIFY_THRESHOLD = 0.65  # ask questions below this
+OWASP_VERSION = "2025"  # OWASP Top 10 version: "2021" or "2025"
 
 # Page config
 st.set_page_config(
-    page_title="Incident Response Platform",
+    page_title="Incident Response ChatOps Bot",
     page_icon="🛡️",
     layout="wide",
-    initial_sidebar_state="expanded",
 )
 
-# Initialize session state
+# Initialize session state - lazy loading to avoid startup delays
 if "dialogue_ctx" not in st.session_state:
     st.session_state.dialogue_ctx = DialogueState()
 
 if "phase1_output" not in st.session_state:
     st.session_state.phase1_output = None
 
+if "chat_messages" not in st.session_state:
+    st.session_state.chat_messages = []  # chat history
+
+# Initialize services (only once per session)
 if "llm_adapter" not in st.session_state:
     st.session_state.llm_adapter = LLMAdapter(model="gemini-2.5-pro")
 
@@ -65,426 +70,687 @@ if "execution_simulator" not in st.session_state:
     st.session_state.execution_simulator = ExecutionSimulator()
 
 if "cve_service" not in st.session_state:
-    st.session_state.cve_service = CVEService()
+    nvd_api_key = os.getenv("NVD_API_KEY")  # optional, works without it
+    st.session_state.cve_service = CVEService(api_key=nvd_api_key)
 
+# UI state flags
 if "enable_execution" not in st.session_state:
     st.session_state.enable_execution = False
 
+if "playbook_approved" not in st.session_state:
+    st.session_state.playbook_approved = False
+
+if "waiting_for_clarification" not in st.session_state:
+    st.session_state.waiting_for_clarification = False
+
+if "show_details_panel" not in st.session_state:
+    st.session_state.show_details_panel = False
+
+if "executed_steps" not in st.session_state:
+    st.session_state.executed_steps = {}
+
+if "current_classification" not in st.session_state:
+    st.session_state.current_classification = None
+
 
 # ============================================
-# Sidebar
+# Left Sidebar - Configuration & Test Cases
 # ============================================
 with st.sidebar:
-    st.title("🛡️ Incident Response")
-    st.markdown("---")
+    st.header("⚙️ Configuration")
     
-    # Simple status
-    st.caption("**Model:** Gemini 2.5 Pro")
-    
-    if st.session_state.get("phase1_output"):
-        st.success("✅ Incident analysed")
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    if not gemini_key:
+        api_key = st.text_input("Gemini API Key", type="password", help="Enter your Google Gemini API key")
+        if api_key:
+            os.environ["GEMINI_API_KEY"] = api_key
+            # Reinitialize LLM adapter with new key
+            st.session_state.llm_adapter = LLMAdapter(model="gemini-2.5-pro")
+            st.success("API Key configured!")
+            st.rerun()
     else:
-        st.info("💬 Describe an incident to begin")
+        st.success("✅ Gemini API Key configured")
     
-    st.markdown("---")
+    st.divider()
     
-    # Execution simulation toggle
-    st.session_state.enable_execution = st.checkbox(
-        "🚀 Enable Execution Simulation",
-        value=st.session_state.enable_execution,
-        help="Simulate execution of response actions (safe demo mode)"
+    st.header("🧪 Test Cases")
+    test_case_id = st.selectbox(
+        "Load Test Case",
+        ["None"] + [tc["id"] for tc in test_cases.TEST_CASES],
+        help="Select a test case to load"
     )
     
-    st.markdown("---")
+    if test_case_id != "None":
+        tc = test_cases.get_test_case(test_case_id)
+        if tc and st.button("Load Test Case"):
+            st.session_state.chat_messages.append({
+                "role": "user",
+                "content": tc["user_input"],
+                "timestamp": datetime.now()
+            })
+            st.rerun()
     
-    # Reset button only
-    if st.button("🔄 Reset Conversation", use_container_width=True):
+    st.divider()
+    
+    if st.button("🔄 Reset Conversation"):
         st.session_state.dialogue_ctx.reset()
         st.session_state.phase1_output = None
+        st.session_state.chat_messages = []
+        st.session_state.playbook_approved = False
+        st.session_state.enable_execution = False
+        st.session_state.waiting_for_clarification = False
+        st.session_state.show_details_panel = True  # Always show panel in new UI
+        st.session_state.executed_steps = {}
         st.session_state.execution_simulator.clear_log()
+        if "phase2_result" in st.session_state:
+            del st.session_state.phase2_result
         st.rerun()
+
+
+# ============================================
+# Main Layout - Fixed 2-Column Layout
+# ============================================
+st.title("🛡️ Incident Response ChatOps Bot")
+st.markdown("**Automated Dynamic Playbooks for Real-Time Threat Mitigation**")
+st.markdown(f"**Focus:** OWASP Top 10 **{OWASP_VERSION}** | Supports both 2021 & 2025")
+
+# Fixed 2-column layout (always show right panel)
+col1, col2 = st.columns([2, 1])
+
+with col1:
+    st.header("💬 Chat Interface")
     
-    st.markdown("---")
-    st.caption("AI-powered incident classification and response automation")
+    # Display chat history
+    for message in st.session_state.chat_messages:
+        with st.chat_message(message["role"]):
+            st.write(message["content"])
+            if "classification" in message:
+                cls = message["classification"]
+                incident_type = cls.get('incident_type', 'Unknown')
+                # Extract version if present
+                version_info = ""
+                if ":2025" in incident_type or ":2021" in incident_type:
+                    if ":2025" in incident_type:
+                        version_info = " (OWASP 2025)"
+                    elif ":2021" in incident_type:
+                        version_info = " (OWASP 2021)"
+                st.caption(f"Classification: {incident_type}{version_info}")
 
+# Chat input
+if prompt := st.chat_input("Describe the security incident..."):
+    user_input = prompt
+    # Add user message
+    st.session_state.chat_messages.append({
+        "role": "user",
+        "content": user_input,
+        "timestamp": datetime.now()
+    })
+    
+    with st.chat_message("user"):
+        st.write(user_input)
+    
+    # Check if it's a greeting or general message
+    prompt_lower = user_input.lower().strip()
+    first_word = prompt_lower.split()[0] if prompt_lower.split() else ""
+    is_greeting = (
+        first_word in ["hi", "hello", "hey", "greetings"] or
+        prompt_lower in ["hi", "hello", "hey", "help", "greetings"] or
+        (len(prompt_lower.split()) <= 2 and "help" in prompt_lower)
+    )
+    
+    # Check if this is a command first (before classification)
+    user_input_lower = user_input.strip().lower()
+    is_generate_command = any(word in user_input_lower for word in ["yes", "generate", "create", "plan", "response", "proceed", "go ahead", "ok", "okay", "sure", "do it"])
+    is_execute_command = any(word in user_input_lower for word in ["run", "execute", "start", "begin", "launch"])
+    
+    with st.chat_message("assistant"):
+        if is_greeting:
+            # Handle greetings and general messages
+            welcome_message = """👋 **Hello! I'm your Incident Response ChatOps Bot.**
 
-# ============================================
-# Main Content
-# ============================================
-st.title("🛡️ Incident Response ChatOps Assistant")
-st.subheader("💬 Ask the Incident Assistant")
-st.caption("Describe what happened in your own words. The assistant will classify it and suggest a response plan.")
+I help classify and respond to security incidents based on OWASP Top 10 2025 categories.
 
-st.markdown("---")
+**How to use:**
 
-# ============================================
-# Phase-1: Incident Description Input
-# ============================================
-st.subheader("📝 Describe the Incident")
+1. Describe a security incident (e.g., "I changed the number in the URL and saw another user's profile")
 
-incident_description = st.text_area(
-    "Incident Description",
-    height=150,
-    placeholder="Example: We detected SQL injection attempts from IP 192.168.1.100 targeting our login endpoint. "
-                "The attacker used union-based injection with payloads like ' UNION SELECT username, password FROM users--",
-    help="Describe the security incident in as much detail as possible. Include IPs, URLs, attack patterns, etc.",
-    key="incident_input",
-)
+2. I'll classify it and generate an automated playbook
 
-classify_button = st.button(
-    "🔍 Classify Incident",
-    type="primary",
-    disabled=not incident_description.strip(),
-    use_container_width=True,
-)
+3. You'll see related CVEs and policy decisions
 
-# Always use full classification (no fast mode toggle for users)
-use_explicit = False
+**Try these examples:**
 
+- "I tried wrong passwords 30 times and it didn't block me"
 
-# ============================================
-# Phase-1: Classification Logic
-# ============================================
-if classify_button and incident_description.strip():
-    with st.spinner("Analyzing incident..."):
-        t0 = time.perf_counter()
-        
-        description_text = incident_description.strip()
-        
-        # Extract IOCs first
-        ents = st.session_state.extractor.extract(description_text)
-        iocs = {
-            "ip": ents.ips,
-            "url": ents.urls,
-            "domain": ents.domains,
-            "hash": ents.hashes,
-            "email": ents.emails,
-        }
-        
-        # Classification
-        if use_explicit:
-            # Fast keyword-based detection
-            fine_label, score = st.session_state.explicit_detector.detect(description_text)
+- "Our API is showing stack trace to users"
+
+- "The system allowed me to set my password to '12345'"
+
+Or load a test case from the sidebar! 🧪"""
             
-            if fine_label:
-                report_category = ClassificationRules.normalize_label(fine_label)[1]
-                rationale = f"Detected based on keyword patterns for {fine_label}"
-            else:
-                report_category = "Unknown"
-                fine_label = "unknown"
-                score = 0.0
-                rationale = "No clear pattern detected"
+            st.markdown(welcome_message)
+            st.session_state.chat_messages.append({
+                "role": "assistant",
+                "content": welcome_message,
+                "timestamp": datetime.now()
+            })
+        elif not st.session_state.llm_adapter:
+            error_msg = "⚠️ **Gemini API Key not configured!**\n\nPlease enter your Gemini API Key in the sidebar to use the classification feature."
+            st.error(error_msg)
+            st.session_state.chat_messages.append({
+                "role": "assistant",
+                "content": error_msg,
+                "timestamp": datetime.now()
+            })
+        # Check if user wants to execute the plan
+        elif is_execute_command and st.session_state.get("phase2_result"):
+            with st.spinner("🚀 Executing response plan..."):
+                try:
+                    # Simulate execution
+                    from src.execution_simulator import ExecutionSimulator
+                    simulator = ExecutionSimulator()
+                    steps = st.session_state.phase2_result.get("steps", [])
+                    execution_results = simulator.execute_playbook(steps)
+                    
+                    response = "✅ **Response plan executed!**\n\n"
+                    response += "**Execution Summary:**\n"
+                    response += f"- Total steps: {len(execution_results)}\n"
+                    response += f"- Completed: {sum(1 for r in execution_results if r.get('status') == 'success')}\n"
+                    response += f"- Simulated: {sum(1 for r in execution_results if r.get('status') == 'simulated')}\n\n"
+                    response += "**Note:** This is a simulation. In production, these actions would be executed against your systems.\n\n"
+                    response += "Would you like to see detailed execution logs?"
+                    
+                    st.write(response)
+                    st.session_state.chat_messages.append({
+                        "role": "assistant",
+                        "content": response,
+                        "timestamp": datetime.now()
+                    })
+                except Exception as e:
+                    st.write(f"❌ Error executing plan: {str(e)[:100]}")
+        # If it's a command and we have a classified incident, generate plan
+        elif is_generate_command and st.session_state.get("phase1_output") and st.session_state.dialogue_ctx.is_ready_for_phase2(thresh=THRESH_GO):
+            with st.spinner("📋 Creating your response plan..."):
+                try:
+                    phase2_result = run_phase2_from_incident(
+                        incident=st.session_state.phase1_output,
+                        merged_with=None,
+                        dry_run=True,
+                    )
+                    
+                    if phase2_result.get("status") == "success":
+                        st.session_state.phase2_result = phase2_result
+                        
+                        response = "✅ **Response plan created!**\n\n"
+                        response += "Here are the recommended steps:\n\n"
+                        
+                        # Group steps by phase
+                        steps_by_phase = {}
+                        for step in phase2_result.get("steps", []):
+                            phase = step.get("phase", "unknown")
+                            steps_by_phase.setdefault(phase, []).append(step)
+                        
+                        phase_display = {
+                            "preparation": "🛡️ Preparation",
+                            "detection_analysis": "🔍 Detection & Analysis",
+                            "containment": "⚠️ Containment (Stop the threat)",
+                            "eradication": "🧹 Eradication (Remove the threat)",
+                            "recovery": "♻️ Recovery (Restore services)",
+                            "post_incident": "📋 Post-Incident Review",
+                        }
+                        
+                        phase_order = ["preparation", "detection_analysis", "containment", "eradication", "recovery", "post_incident"]
+                        
+                        for phase_key in phase_order:
+                            if phase_key in steps_by_phase:
+                                response += f"**{phase_display[phase_key]}**\n"
+                                for idx, s in enumerate(steps_by_phase[phase_key], 1):
+                                    response += f"{idx}. {s.get('name', 'Unknown')}\n"
+                                response += "\n"
+                        
+                        response += "\n💡 **Would you like me to execute this plan?** (Say 'execute' or 'run' to proceed)"
+                        
+                        st.write(response)
+                        
+                        st.session_state.chat_messages.append({
+                            "role": "assistant",
+                            "content": response,
+                            "timestamp": datetime.now()
+                        })
+                    else:
+                        st.write("❌ I couldn't create a response plan for this incident type. Please provide more details or try a different description.")
+                except Exception as e:
+                    st.write(f"❌ Error creating plan: {str(e)[:100]}")
         else:
-            # LLM-based classification
-            kb_context = st.session_state.kb_retriever.get_context_for_label(description_text)
-            
-            classification = st.session_state.llm_adapter.classify_incident(
-                description=description_text,
-                context=kb_context,
-            )
-            
-            fine_label = classification.get("fine_label", "unknown")
-            score = classification.get("confidence", 0.0)
-            report_category = classification.get("incident_type", "Unknown")
-            rationale = classification.get("rationale", "")
-        
-        # Build Phase-1 output
-        label = fine_label.lower().replace(" ", "_")
-        
-        st.session_state.phase1_output = {
-            "incident_type": report_category,
-            "fine_label": label,
-            "confidence": score,
-            "rationale": rationale,
-            "entities": ents.__dict__(),
-            "iocs": iocs,
-            "related_CVEs": ents.cves,
-            "kb_excerpt": kb_context[:600] if not use_explicit else "",
-            "timestamp_ms": round((time.perf_counter() - t0) * 1000, 1),
-        }
-        
-        # Update dialogue state
-        st.session_state.dialogue_ctx.add_turn(
-            user_input=description_text,
-            classification=st.session_state.phase1_output,
-        )
-        
-        st.success(f"✅ Classification complete in {st.session_state.phase1_output['timestamp_ms']}ms")
-
-
-# ============================================
-# Phase-1: Display Classification Results
-# ============================================
-if st.session_state.get("phase1_output"):
-    p1 = st.session_state.phase1_output
-    
-    st.markdown("---")
-    st.subheader("🧾 Current Case Overview")
-    
-    owasp_name = get_owasp_display_name(p1["fine_label"], show_specific=True)
-    conf_pct = int(p1["confidence"] * 100)
-    
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        st.write(f"**Type:** {owasp_name}")
-    with col2:
-        badge = format_confidence_badge(p1["confidence"])
-        if conf_pct >= 70:
-            st.success(f"**Confidence:** {badge}")
-        elif conf_pct >= 60:
-            st.warning(f"**Confidence:** {badge}")
-        else:
-            st.error(f"**Confidence:** {badge}")
-    
-    # Rationale
-    if p1.get("rationale"):
-        with st.expander("📖 Classification Rationale"):
-            st.write(p1["rationale"])
-    
-    # Indicators
-    indicators = []
-    if p1["iocs"].get("ip"):
-        indicators.append(f"{len(p1['iocs']['ip'])} IP(s)")
-    if p1["iocs"].get("url"):
-        indicators.append(f"{len(p1['iocs']['url'])} URL(s)")
-    if p1.get("related_CVEs"):
-        indicators.append(f"{len(p1['related_CVEs'])} CVE(s)")
-    
-    if indicators:
-        st.write("**Indicators:** " + ", ".join(indicators))
-        
-        # Show IOCs in expander
-        with st.expander("🔍 Extracted Indicators"):
-            if p1["iocs"]["ip"]:
-                st.write("**IPs:**", ", ".join(p1["iocs"]["ip"]))
-            if p1["iocs"]["url"]:
-                st.write("**URLs:**", ", ".join(p1["iocs"]["url"]))
-            if p1["related_CVEs"]:
-                st.write("**CVEs:**", ", ".join(p1["related_CVEs"]))
-    
-    # OWASP details
-    owasp_id = ClassificationRules.normalize_label(p1["fine_label"])[0]
-    owasp_details = get_owasp_description(owasp_id)
-    
-    with st.expander("📚 OWASP Category Details"):
-        st.write(f"**{owasp_details['name']}**")
-        st.write(owasp_details["description"])
-        if owasp_details.get("examples"):
-            st.write("**Common Examples:**")
-            for ex in owasp_details["examples"]:
-                st.write(f"- {ex}")
-    
-    # CVE Lookup
-    st.markdown("---")
-    st.subheader("🔍 Related Vulnerabilities")
-    
-    with st.spinner("Searching CVE database..."):
-        # Extract keywords for CVE search
-        search_term = owasp_name.lower()
-        if "injection" in search_term:
-            search_term = "sql injection"
-        elif "xss" in search_term or "cross" in search_term:
-            search_term = "xss"
-        elif "authentication" in search_term:
-            search_term = "authentication bypass"
-        
-        cve_results = st.session_state.cve_service.search_vulnerabilities(search_term, max_results=3)
-        
-        if cve_results:
-            for cve in cve_results:
-                severity_color = {
-                    "CRITICAL": "🔴",
-                    "HIGH": "🟠",
-                    "MEDIUM": "🟡",
-                    "LOW": "🟢"
-                }.get(cve["severity"], "⚪")
+            # Process as incident description
+            with st.spinner("🔍 Analyzing incident..."):
+                # Classification logic
+                description_text = user_input.strip()
                 
-                with st.expander(f"{severity_color} {cve['cve_id']} - {cve['severity']} (CVSS: {cve['cvss_score']})"):
-                    st.write(cve["description"])
-                    st.caption(f"Published: {cve['published']} | Modified: {cve['modified']}")
-        else:
-            st.info("No related CVEs found in database.")
-    
-    # ============================================
-    # Phase-2: Automated Response Plan
-    # ============================================
-    ctx = st.session_state.dialogue_ctx
-    
-    if ctx.is_ready_for_phase2(thresh=THRESH_GO):
-        st.markdown("---")
-        st.subheader("⚙️ Automated Response")
-        
-        st.info("💡 Your incident has been classified with sufficient confidence. Generate an automated response plan below.")
-        
-        # Optional: Multi-incident merge (can be hidden for simpler demo)
-        extra_incidents_text = st.text_area(
-            "Additional incidents to merge (optional)",
-            placeholder="Leave empty if there is only one incident.",
-            help="If multiple related incidents occurred, describe them here to create a unified response plan.",
-            key="extra_incidents",
-            height=80,
-        )
-        
-        # Always simulate in this demo (no toggle shown to users)
-        dry_run = True
-        
-        phase2_button = st.button(
-            "🚀 Generate Response Plan",
-            type="primary",
-            key="phase2_trigger",
-            use_container_width=True,
-        )
-        
-        # Phase-2 execution
-        if phase2_button:
-            with st.spinner("Generating response plan..."):
+                # Extract IOCs
+                ents = st.session_state.extractor.extract(description_text)
+                iocs = {
+                    "ip": ents.ips,
+                    "url": ents.urls,
+                    "domain": ents.domains,
+                    "hash": ents.hashes,
+                    "email": ents.emails,
+                }
                 
-                # For now, just use current incident
-                # (Multi-incident merge can be added later)
-                phase2_result = run_phase2_from_incident(
-                    incident=p1,
-                    merged_with=None,
-                    dry_run=dry_run,
-                )
+                # Get knowledge base context
+                kb_context = st.session_state.kb_retriever.get_context_for_label(description_text)
                 
-                status = phase2_result.get("status")
+                # Try explicit detection first (only for very obvious cases)
+                explicit_label, explicit_conf = st.session_state.explicit_detector.detect(description_text)
                 
-                if status != "success":
-                    st.error("❌ No suitable playbook found for this incident.")
-                    st.caption(phase2_result.get("description", ""))
+                # Only use fast path for VERY obvious cases (exact SQL patterns, etc.)
+                # For everything else, trust Gemini's semantic understanding
+                if explicit_label and explicit_conf >= 0.90:  # Only very high confidence
+                    # Fast path - skip LLM for obvious cases like "' OR 1=1"
+                    from src.classification_rules import canonicalize_label
+                    canonical = canonicalize_label(explicit_label)
+                    fine_label = canonical
+                    score = explicit_conf
+                    report_category = ClassificationRules.get_owasp_display_name(fine_label, show_specific=False)
+                    rationale = f"Detected: {explicit_label}"
                 else:
-                    st.success("✅ Response plan generated successfully!")
-                    
-                    playbooks = phase2_result.get("playbooks", [])
-                    main_pb = phase2_result.get("playbook", "Unknown")
-                    
-                    st.info(f"**Playbook(s):** {', '.join(playbooks) or main_pb}")
-                    st.caption(phase2_result.get("description", ""))
-                    
-                    # Explain simulation mode
-                    st.caption("ℹ️ **Note:** This plan is generated in simulation mode. No real actions are executed on your systems.")
-                    
-                    # Execution Simulation
-                    if st.session_state.enable_execution:
-                        st.markdown("---")
-                        st.subheader("🚀 Executing Response Actions")
+                    # Use LLM for semantic understanding - it handles vague descriptions better
+                    try:
+                        # Build rich context for LLM with FULL conversation history
+                        # Get both structured context and natural conversation flow
+                        conversation_summary = st.session_state.dialogue_ctx.get_conversation_context()
+                        full_conversation = st.session_state.dialogue_ctx.get_full_conversation_history()
                         
-                        # Convert phase2 steps to executable format
-                        executable_steps = []
-                        for step in phase2_result["steps"]:
-                            executable_steps.append({
-                                "action": step.get("name", "Unknown Action"),
-                                "description": step.get("ui_description", step.get("message", ""))
-                            })
+                        # Add explicit detection hint if we found something (even if low confidence)
+                        context_parts = [kb_context]
+                        if explicit_label and explicit_conf >= 0.60:
+                            context_parts.append(f"Keyword hint: '{explicit_label}' (confidence: {explicit_conf:.2f})")
                         
-                        # Progress tracking
-                        progress_bar = st.progress(0)
-                        status_text = st.empty()
+                        # Add NVD context if we have CVEs or can search for related vulnerabilities
+                        if ents.cves:
+                            cve_info = []
+                            for cve_id in ents.cves[:3]:  # Limit to 3 CVEs
+                                try:
+                                    cve_data = st.session_state.cve_service.get_cve_by_id(cve_id)
+                                    if cve_data:
+                                        cve_info.append(f"{cve_id}: {cve_data.get('description', '')[:200]}")
+                                except:
+                                    pass
+                            if cve_info:
+                                context_parts.append(f"Related CVEs:\n" + "\n".join(cve_info))
                         
-                        def update_progress(current, total, action_name):
-                            progress = current / total
-                            progress_bar.progress(progress)
-                            status_text.text(f"Executing step {current}/{total}: {action_name}")
+                        full_context = "\n".join(context_parts)
                         
-                        # Execute with simulation
-                        execution_results = st.session_state.execution_simulator.execute_playbook(
-                            executable_steps,
-                            progress_callback=update_progress
+                        # Pass full conversation history so Gemini remembers everything
+                        classification = st.session_state.llm_adapter.classify_incident(
+                            description=description_text,
+                            context=full_context,
+                            conversation_history=full_conversation,  # Full natural conversation
                         )
                         
-                        # Clear progress indicators
-                        progress_bar.empty()
-                        status_text.empty()
+                        fine_label = classification.get("fine_label", "unknown")
+                        score = float(classification.get("confidence", 0.0))
+                        report_category = classification.get("incident_type", "Unknown")
+                        rationale = classification.get("rationale", "AI-based classification")
                         
-                        # Display execution results
-                        st.success(f"✅ Executed {len(execution_results)} actions successfully!")
+                        # If explicit detection found something and LLM agrees, boost confidence
+                        if explicit_label and explicit_conf >= 0.70:
+                            from src.classification_rules import canonicalize_label
+                            explicit_canonical = canonicalize_label(explicit_label)
+                            fine_label_canonical = canonicalize_label(fine_label)
+                            if explicit_canonical == fine_label_canonical:
+                                score = max(score, 0.90)  # Both agree = high confidence
+                                rationale = f"Confirmed by both methods: {fine_label}"
+                    except Exception as e:
+                        # API call failed, use fallback
+                        if explicit_label:
+                            from src.classification_rules import canonicalize_label
+                            fine_label = canonicalize_label(explicit_label)
+                            score = explicit_conf
+                            report_category = ClassificationRules.get_owasp_display_name(fine_label, show_specific=False)
+                            rationale = f"Detected: {explicit_label}"
+                        else:
+                            fine_label = "other"
+                            score = 0.3  # low confidence fallback
+                            report_category = "Unknown Incident"
+                            rationale = "Need more information"
+                
+                # Build classification result
+                label = fine_label.lower().replace(" ", "_")
+                
+                # Calibrate confidence based on rationale quality
+                # If rationale is detailed and specific, boost confidence slightly
+                if rationale and len(rationale) > 50 and any(word in rationale.lower() for word in ["because", "indicates", "suggests", "typically", "likely", "could be", "might also"]):
+                    # Detailed reasoning = more reliable
+                    score = min(score * 1.05, 0.95)  # Small boost, cap at 0.95
+                
+                # Search for related CVEs based on incident type
+                related_cves = list(ents.cves) if ents.cves else []
+                try:
+                    # Search NVD for CVEs related to this incident type
+                    search_keywords = []
+                    if label == "injection" or "sql_injection" in label:
+                        search_keywords = ["SQL injection", "injection"]
+                    elif label == "broken_access_control":
+                        search_keywords = ["access control", "IDOR", "authorization"]
+                    elif label == "broken_authentication":
+                        search_keywords = ["authentication", "session"]
+                    elif label == "security_misconfiguration":
+                        search_keywords = ["misconfiguration", "default credentials"]
+                    
+                    if search_keywords:
+                        for keyword in search_keywords[:2]:  # Limit to 2 searches
+                            try:
+                                cve_results = st.session_state.cve_service.search_vulnerabilities(keyword, max_results=3)
+                                for cve in cve_results:
+                                    cve_id = cve.get("cve_id") or cve.get("id")
+                                    if cve_id and cve_id not in related_cves:
+                                        related_cves.append(cve_id)
+                                        if len(related_cves) >= 5:  # Limit to 5 CVEs total
+                                            break
+                                if len(related_cves) >= 5:
+                                    break
+                            except:
+                                pass
+                except:
+                    pass
+                
+                # Extract OWASP version from classification if present
+                detected_version = OWASP_VERSION  # Default
+                if isinstance(classification, dict) and classification.get("owasp_version"):
+                    detected_version = classification.get("owasp_version", OWASP_VERSION)
+                elif ":2025" in report_category or ":2021" in report_category:
+                    if ":2025" in report_category:
+                        detected_version = "2025"
+                    elif ":2021" in report_category:
+                        detected_version = "2021"
+                
+                classification_result = {
+                    "incident_type": report_category,
+                    "fine_label": label,
+                    "confidence": score,
+                    "rationale": rationale,
+                    "entities": ents.__dict__(),
+                    "iocs": iocs,
+                    "related_CVEs": related_cves[:5],  # Limit to 5 CVEs
+                    "kb_excerpt": kb_context[:600] if kb_context else "",
+                    "owasp_version": detected_version,  # Store version for display
+                }
+                
+                # Update dialogue state
+                st.session_state.dialogue_ctx.add_turn(
+                    user_input=description_text,
+                    classification=classification_result,
+                )
+                
+                st.session_state.phase1_output = classification_result
+                
+                # Generate response based on confidence
+                conf_pct = int(score * 100)
+                owasp_name = get_owasp_display_name(label, show_specific=True, version=OWASP_VERSION)
+                
+                # Helper function to make names user-friendly (remove technical codes)
+                def make_user_friendly(name: str) -> str:
+                    """Remove technical OWASP codes like 'A03' from display names."""
+                    # Remove "A03 - " or "A04 - " prefixes
+                    if " - " in name:
+                        name = name.split(" - ", 1)[-1]
+                    # Remove any remaining codes
+                    for code in ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10"]:
+                        name = name.replace(code, "").strip()
+                    # Clean up any double spaces or leading dashes
+                    name = name.replace("  ", " ").strip()
+                    if name.startswith("-"):
+                        name = name[1:].strip()
+                    return name if name else "Security Incident"
+                
+                user_friendly_name = make_user_friendly(owasp_name)
+                
+                if score >= CLARIFY_THRESHOLD:
+                    # High confidence - show classification
+                    
+                    version_badge = f"OWASP {OWASP_VERSION}"
+                    response = f"✅ **I've analyzed your incident.**\n\n"
+                    response += f"**Classification:** {user_friendly_name} ({version_badge})\n"
+                    response += f"**Confidence:** {conf_pct}% "
+                    
+                    # Add confidence indicator
+                    if conf_pct >= 80:
+                        response += "🟢 (High)\n"
+                    elif conf_pct >= 60:
+                        response += "🟡 (Medium)\n"
+                    else:
+                        response += "🟠 (Low)\n"
+                    response += "\n"
+                    
+                    if rationale and rationale != "AI-based classification":
+                        response += f"**Analysis:** {rationale}\n\n"
+                    
+                    # Show IOCs if found
+                    has_iocs = False
+                    ioc_list = []
+                    if iocs.get("ip"):
+                        has_iocs = True
+                        ioc_list.append(f"📍 {len(iocs['ip'])} IP address(es)")
+                    if iocs.get("url"):
+                        has_iocs = True
+                        ioc_list.append(f"🔗 {len(iocs['url'])} URL(s)")
+                    if iocs.get("domain"):
+                        has_iocs = True
+                        ioc_list.append(f"🌐 {len(iocs['domain'])} domain(s)")
+                    
+                    if has_iocs:
+                        response += f"**Indicators Found:** {' | '.join(ioc_list)}\n\n"
+                    
+                    # Show related CVEs
+                    if classification_result.get("related_CVEs"):
+                        cve_list = classification_result["related_CVEs"][:5]
+                        response += f"**🔒 Related CVEs ({len(cve_list)}):**\n"
+                        for cve_id in cve_list:
+                            try:
+                                cve_data = st.session_state.cve_service.get_cve_by_id(cve_id)
+                                if cve_data:
+                                    severity = cve_data.get("severity", "Unknown")
+                                    cvss = cve_data.get("cvss_score")
+                                    desc = cve_data.get("description", "")[:100]
+                                    severity_emoji = {"CRITICAL": "🔴", "HIGH": "🟠", "MEDIUM": "🟡", "LOW": "🟢"}.get(severity, "⚪")
+                                    cvss_str = f" (CVSS: {cvss})" if cvss else ""
+                                    response += f"- {severity_emoji} **{cve_id}** {severity}{cvss_str}: {desc}...\n"
+                                else:
+                                    response += f"- **{cve_id}**\n"
+                            except:
+                                response += f"- **{cve_id}**\n"
+                        response += "\n"
+                    
+                    # Check if ready for Phase-2
+                    if st.session_state.dialogue_ctx.is_ready_for_phase2(thresh=THRESH_GO):
+                        response += "🎯 **I have enough information!** Would you like me to generate a response plan?\n\n"
+                        response += "Just say 'yes', 'generate plan', or 'create response plan' and I'll create step-by-step actions for you."
+                    else:
+                        response += "💡 I could use a bit more detail. Can you tell me more about what happened?"
+                    
+                    st.write(response)
+                    
+                    # Store assistant message
+                    st.session_state.chat_messages.append({
+                        "role": "assistant",
+                        "content": response,
+                        "classification": classification_result,
+                        "timestamp": datetime.now(),
+                        "playbook_actions": st.session_state.get("phase2_result", {}).get("steps", []),
+                        "cves": classification_result.get("related_CVEs", [])
+                    })
+                    
+                    st.session_state.waiting_for_clarification = False
+                    st.session_state.current_classification = classification_result.get("incident_type")
+                    
+                else:
+                    # Low confidence - ask clarifying question
+                    conversation_history = st.session_state.dialogue_ctx.get_conversation_context()
+                    
+                    # Generate more specific question based on what we detected
+                    try:
+                        # Use full conversation history for better context
+                        full_conversation = st.session_state.dialogue_ctx.get_full_conversation_history()
                         
-                        with st.expander("📋 View Execution Log", expanded=True):
-                            for idx, result in enumerate(execution_results, 1):
-                                col1, col2 = st.columns([1, 11])
-                                
-                                with col1:
-                                    if result["status"] == "success":
-                                        st.markdown("✅")
-                                    else:
-                                        st.markdown("❌")
-                                
-                                with col2:
-                                    st.markdown(f"**{result['step']}**")
-                                    st.caption(result["message"])
-                                    if result.get("details"):
-                                        st.caption(f"Details: {result['details']}")
-                                    st.caption(f"⏱️ {result['execution_time']:.2f}s")
-                                
-                                if idx < len(execution_results):
-                                    st.markdown("---")
+                        # If we have a hint from explicit detection, use it
+                        if explicit_label and explicit_conf >= 0.60:
+                            # We detected something but not confident enough
+                            if explicit_label == "injection":
+                                clarifying_question = "This sounds like it might be an injection attack. Can you tell me more? For example: What exact error messages or syntax did you see? Was it on a login page, search form, or somewhere else?"
+                            elif explicit_label == "broken_access_control":
+                                clarifying_question = "This might be an access control issue. Can you clarify: What were they trying to access? Did they change a URL or parameter? What happened when they accessed it?"
+                            else:
+                                clarifying_question = st.session_state.llm_adapter.generate_clarifying_question(
+                                    incident_description=description_text,
+                                    current_classification=classification_result,
+                                    conversation_history=full_conversation
+                                )
+                        else:
+                            clarifying_question = st.session_state.llm_adapter.generate_clarifying_question(
+                                incident_description=description_text,
+                                current_classification=classification_result,
+                                conversation_history=full_conversation
+                            )
+                    except:
+                        # Fallback - make it more specific based on keywords
+                        if any(word in description_text.lower() for word in ["syntax", "error", "weird", "strange"]):
+                            clarifying_question = "This sounds like it might be a code injection issue. Can you tell me: What exact error messages or syntax did you see? Where did it appear (login page, search form, etc.)? Did you see any SQL errors or database messages?"
+                        else:
+                            clarifying_question = "I understand this is frustrating. Can you help me understand what happened? For example, what error messages did you see, or what suspicious activity did you notice?"
                     
-                    # Group steps by phase
-                    steps_by_phase = {}
-                    for step in phase2_result["steps"]:
-                        phase = step.get("phase", "unknown")
-                        steps_by_phase.setdefault(phase, []).append(step)
+                    # Use user-friendly language (already defined above)
+                    version_badge = f"OWASP {OWASP_VERSION}"
+                    response = f"🔍 I've analyzed your incident and I'm about {conf_pct}% confident this might be **{user_friendly_name}** ({version_badge}), but I'd like to gather more details to ensure accuracy.\n\n"
+                    response += f"**{clarifying_question}**"
                     
-                    # Display steps organized by NIST IR phases
-                    phase_order = [
-                        ("preparation", "🛡️ Preparation"),
-                        ("detection_analysis", "🔍 Detection & Analysis"),
-                        ("containment", "⚠️ Containment"),
-                        ("eradication", "🧹 Eradication"),
-                        ("recovery", "♻️ Recovery"),
-                        ("post_incident", "📋 Post-Incident Review"),
-                        ("unknown", "❓ Other Steps"),
-                    ]
+                    st.write(response)
                     
-                    st.markdown("---")
-                    st.subheader("📋 Response Plan Steps")
+                    # Store assistant message
+                    st.session_state.chat_messages.append({
+                        "role": "assistant",
+                        "content": response,
+                        "classification": classification_result,
+                        "timestamp": datetime.now()
+                    })
                     
-                    for key, title in phase_order:
-                        if key in steps_by_phase:
-                            st.markdown(f"### {title}")
+                    st.session_state.waiting_for_clarification = True
+    
+    st.rerun()
+
+# Right Panel - Incident Details & Playbook (always visible)
+with col2:
+    st.header("📊 Incident Details")
+    
+    if st.session_state.get("current_classification") or st.session_state.get("phase1_output"):
+        if st.session_state.get("phase1_output"):
+            p1 = st.session_state.phase1_output
+            category = p1.get("incident_type", "Unknown")
+            owasp_id = ClassificationRules.get_owasp_display_name(p1["fine_label"], show_specific=False, version=OWASP_VERSION)
+            
+            # Extract OWASP ID and version for description lookup
+            owasp_code = owasp_id.split(":")[0] if ":" in owasp_id else owasp_id.split()[0]
+            owasp_desc = get_owasp_description(owasp_code)
+            
+            # Show version badge
+            version_badge = f"🛡️ OWASP {OWASP_VERSION}"
+            st.info(f"**{owasp_id}**\n\n{version_badge}\n\n{owasp_desc.get('description', 'No description available.')}")
+        else:
+            st.info("💡 Describe a security incident to see classification and playbook")
+    else:
+        st.info("💡 Describe a security incident to see classification and playbook")
+    
+    if st.session_state.get("phase2_result"):
+        st.markdown("---")
+        # Automated Playbook Section
+        st.subheader("📋 Automated Playbook")
+        
+        phase2 = st.session_state.phase2_result
+        steps = phase2.get("steps", [])
+        
+        if not steps:
+            st.info("No playbook steps available.")
+        else:
+            st.caption(f"**Total Steps:** {len(steps)}")
+            st.markdown("---")
+            
+            for idx, step in enumerate(steps, 1):
+                step_id = step.get("id") or f"step_{idx}"
+                step_name = step.get("name", "Unknown Step")
+                step_desc = step.get("description") or step.get("ui_description") or step.get("message", "No description")
+                step_status = st.session_state.executed_steps.get(step_id, "pending")
+                
+                # Make steps expandable
+                with st.expander(f"Step {idx}: {step_name}", expanded=(idx <= 2)):  # First 2 expanded by default
+                    st.write(f"**Status:** {step_status}")
+                    st.write(f"**Description:** {step_desc}")
+                    
+                    # Execute button
+                    button_key = f"exec_{step_id}_{idx}"
+                    if st.button(f"Execute Step {idx}", key=button_key, disabled=(step_status == "executed")):
+                        # Execute the step
+                        try:
+                            from src.execution_simulator import ExecutionSimulator
+                            simulator = ExecutionSimulator()
+                            result = simulator._execute_step({
+                                "action": step_name,
+                                "description": step_desc
+                            })
                             
-                            for idx, s in enumerate(steps_by_phase[key], 1):
-                                col1, col2 = st.columns([1, 11])
-                                
-                                with col1:
-                                    st.markdown(f"**{idx}.**")
-                                
-                                with col2:
-                                    st.markdown(f"**{s['name']}**")
-                                    
-                                    if s.get("ui_description"):
-                                        st.caption(s["ui_description"])
-                                    elif s.get("message"):
-                                        st.caption(s["message"])
+                            st.session_state.executed_steps[step_id] = "executed"
+                            st.success(f"Step {idx} executed!")
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Error executing step: {str(e)[:50]}")
                     
-                    st.markdown("---")
-                    
-                    # Automation summary
-                    automation = phase2_result.get("automation", {})
-                    if automation.get("executed"):
-                        st.subheader("🤖 Automation Summary")
-                        details = automation.get("details", {})
-                        if details:
-                            st.write(f"**Status:** {details.get('status', 'Unknown')}")
-                            
-                            summary = details.get("summary", {})
-                            if summary:
-                                col1, col2, col3, col4 = st.columns(4)
-                                col1.metric("Total Steps", summary.get("total_steps", 0))
-                                col2.metric("Succeeded", summary.get("succeeded", 0))
-                                col3.metric("Failed", summary.get("failed", 0))
-                                col4.metric("Blocked", summary.get("blocked", 0))
-                    elif automation.get("dry_run"):
-                        st.info("💡 **Dry Run Mode:** No actions were actually executed. Uncheck 'Dry Run' to run real automation (use with caution!).")
-                    
-                    st.success("✅ You can refine the incident description and regenerate the plan if needed.")
+                    # Show execution status
+                    if step_status == "executed":
+                        st.success(f"Step {idx} executed!")
+    
+    # Related CVEs Section
+    if st.session_state.get("phase1_output"):
+        st.markdown("---")
+        st.subheader("🔍 Related CVEs")
+        
+        p1 = st.session_state.phase1_output
+        related_cves = p1.get("related_CVEs", [])
+        
+        if not related_cves:
+            st.info("No related CVEs found.")
+        else:
+            for cve_id in related_cves[:5]:  # Limit to 5 CVEs
+                try:
+                    cve_data = st.session_state.cve_service.get_cve_by_id(cve_id)
+                    if cve_data:
+                        severity = cve_data.get("severity", "Unknown")
+                        cvss = cve_data.get("cvss_score")
+                        desc = cve_data.get("description", "")[:200]
+                        
+                        # Make CVEs expandable
+                        with st.expander(f"{cve_id} - CVSS: {cvss if cvss else 'N/A'}", expanded=False):
+                            st.write(f"**Description:** {desc}")
+                            st.write(f"**Severity:** {severity}")
+                            st.write(f"**Link:** https://nvd.nist.gov/vuln/detail/{cve_id}")
+                    else:
+                        st.write(f"**{cve_id}**")
+                except:
+                    st.write(f"**{cve_id}**")
+    
+    # OPA Policy Result (if available)
+    for msg in reversed(st.session_state.chat_messages):
+        if msg.get("role") == "assistant" and "opa_result" in msg:
+            st.markdown("---")
+            st.subheader("🤖 Automation Policy")
+            opa_result = msg["opa_result"]
+            if opa_result.get("can_automate"):
+                st.success("✅ Automated response allowed")
+            else:
+                st.warning("⚠️ Requires human review")
+            st.write(f"**Severity:** {opa_result.get('severity', 'N/A')}")
+            st.write(f"**Reason:** {opa_result.get('reason', 'N/A')}")
+            break
 
-else:
-    st.info("👆 Enter an incident description above and click 'Classify Incident' to begin.")
-
-
-# ============================================
 # Footer
-# ============================================
-st.markdown("---")
-st.caption("🛡️ Incident Response Platform | Phase-1: LLM Classification | Phase-2: DAG Automation")
+st.divider()
+st.caption("Powered by Gemini LLM | OWASP Top 10 2025 | NetworkX DAG Playbooks | OPA Policy Engine")
+

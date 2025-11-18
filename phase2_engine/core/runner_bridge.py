@@ -3,6 +3,11 @@
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
+import sys
+import os
+
+# Add src to path for compatibility module
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
 from .runner import run_playbook  # from IR-SANDBOX core
 from .playbook_utils import (
@@ -11,6 +16,34 @@ from .playbook_utils import (
     merge_graphs,
     evaluate_policy,  # currently optional, but available
 )
+
+try:
+    from owasp_compatibility import get_playbook_file, normalize_owasp_id
+except ImportError:
+    # Fallback if module not found
+    def get_playbook_file(owasp_id: str, version: str = "2025") -> str:
+        """Fallback playbook file mapping."""
+        mapping = {
+            "A01": "A01_broken_access_control",
+            "A02": "A05_misconfiguration",  # 2025 A02 = 2021 A05
+            "A03": "A06_vulnerable_components",  # 2025 A03 = 2021 A06
+            "A04": "A02_cryptographic_failures",  # 2025 A04 = 2021 A02
+            "A05": "A03_injection",  # 2025 A05 = 2021 A03
+            "A06": "A04_insecure_design",  # 2025 A06 = 2021 A04
+            "A07": "A07_authentication_failures",
+            "A08": "A08_data_integrity",
+            "A09": "A09_logging_failures",
+            "A10": "A10_ssrf",
+        }
+        return mapping.get(owasp_id, f"{owasp_id}_unknown")
+    
+    def normalize_owasp_id(owasp_id: str, target_version: str = "2025") -> tuple:
+        """Fallback normalization."""
+        if ":" in owasp_id:
+            owasp_id = owasp_id.split(":")[0].strip()
+        if " " in owasp_id:
+            owasp_id = owasp_id.split()[0].strip()
+        return owasp_id, get_playbook_file(owasp_id, target_version)
 
 
 # Map your Phase-1 labels to concrete playbook IDs
@@ -22,7 +55,9 @@ INCIDENT_TO_PLAYBOOK: Dict[str, List[str]] = {
     "Sensitive Data Exposure": ["A02_cryptographic_failures"],
     "Cryptographic Failures": ["A02_cryptographic_failures"],
     "Misconfiguration": ["A05_security_misconfiguration"],
-    "Vulnerable Components": ["A06_vulnerable_and_outdated_components"],
+    "Vulnerable Components": ["A06_vulnerable_components"],
+    "Software Supply Chain Failures": ["A06_vulnerable_components"],
+    "Insecure Design": ["A06_vulnerable_components"],
 
     # Fine labels (phase1_output["fine_label"])
     "injection": ["A03_injection"],
@@ -41,7 +76,26 @@ INCIDENT_TO_PLAYBOOK: Dict[str, List[str]] = {
     "security_misconfiguration": ["A05_security_misconfiguration"],
     "misconfig": ["A05_security_misconfiguration"],
 
-    "vulnerable_component": ["A06_vulnerable_and_outdated_components"],
+    "vulnerable_components": ["A06_vulnerable_components"],
+    "vulnerable_component": ["A06_vulnerable_components"],
+    "vulnerable_and_outdated_components": ["A06_vulnerable_components"],
+    "outdated_components": ["A06_vulnerable_components"],
+    "supply_chain": ["A06_vulnerable_components"],
+    "supply_chain_failure": ["A06_vulnerable_components"],
+    "supply_chain_compromise": ["A06_vulnerable_components"],
+    "insecure_design": ["A06_vulnerable_components"],  # Fallback for supply chain issues
+    "Software Supply Chain Failures": ["A06_vulnerable_components"],
+    "Insecure Design": ["A06_vulnerable_components"],  # Fallback
+    
+    # Data Integrity (A08:2025)
+    "data_integrity": ["A08_data_integrity"],
+    "integrity_failures": ["A08_data_integrity"],
+    "Software or Data Integrity Failures": ["A08_data_integrity"],
+    
+    # Logging & Alerting Failures (A09:2025)
+    "logging_failures": ["A09_logging_failures"],
+    "monitoring_failures": ["A09_logging_failures"],
+    "Logging & Alerting Failures": ["A09_logging_failures"],
 }
 
 

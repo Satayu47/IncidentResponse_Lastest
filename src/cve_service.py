@@ -5,6 +5,7 @@ Fetches vulnerability information from National Vulnerability Database
 
 import requests
 import time
+import os
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
 
@@ -15,9 +16,20 @@ class CVEService:
     Uses NVD REST API v2.0
     """
     
-    def __init__(self):
+    def __init__(self, api_key: Optional[str] = None):
         self.base_url = "https://services.nvd.nist.gov/rest/json/cves/2.0"
-        self.rate_limit_delay = 6  # NVD requires 6 seconds between requests without API key
+        self.api_key = api_key or os.getenv("NVD_API_KEY")
+        
+        # Rate limiting: 6s without API key, 0.5s with API key
+        if self.api_key:
+            self.rate_limit_delay = 0.5  # With API key: 50 requests per 30 seconds
+        else:
+            self.rate_limit_delay = 6  # Without API key: 6 seconds between requests
+        
+        self.session = requests.Session()
+        if self.api_key:
+            self.session.headers.update({"apiKey": self.api_key})
+        
         self.last_request_time = None
         self.cache = {}  # Simple in-memory cache
         self.cache_ttl = timedelta(hours=24)
@@ -43,7 +55,7 @@ class CVEService:
                 "resultsPerPage": max_results
             }
             
-            response = requests.get(self.base_url, params=params, timeout=10)
+            response = self.session.get(self.base_url, params=params, timeout=10)
             response.raise_for_status()
             
             data = response.json()
@@ -73,7 +85,7 @@ class CVEService:
         
         try:
             url = f"{self.base_url}?cveId={cve_id}"
-            response = requests.get(url, timeout=10)
+            response = self.session.get(url, timeout=10)
             response.raise_for_status()
             
             data = response.json()

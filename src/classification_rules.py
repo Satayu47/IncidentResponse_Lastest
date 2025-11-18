@@ -49,24 +49,30 @@ _CANON_MAP = {
     "credential_stuffing": "broken_authentication",
     "brute_force": "broken_authentication",
 
-    # Sensitive Data Exposure
-    "sensitive_data_exposure": "sensitive_data_exposure",
-    "data_exposure": "sensitive_data_exposure",
-    "data_leak": "sensitive_data_exposure",
-    "data_breach": "sensitive_data_exposure",
-    "information_disclosure": "sensitive_data_exposure",
-    "pii_exposure": "sensitive_data_exposure",
+    # Sensitive Data Exposure (maps to Cryptographic Failures in 2025)
+    "sensitive_data_exposure": "cryptographic_failures",  # A04:2025
+    "data_exposure": "cryptographic_failures",
+    "data_leak": "cryptographic_failures",
+    "data_breach": "cryptographic_failures",
+    "information_disclosure": "cryptographic_failures",
+    "pii_exposure": "cryptographic_failures",
+    "plaintext": "cryptographic_failures",
+    "plaintext_passwords": "cryptographic_failures",
+    "unencrypted_data": "cryptographic_failures",
 
-    # Cryptographic Failures
+    # Cryptographic Failures (A04:2025)
     "cryptographic_failures": "cryptographic_failures",
     "crypto_failures": "cryptographic_failures",
     "insecure_transport": "cryptographic_failures",
     "tls_failure": "cryptographic_failures",
     "no_tls": "cryptographic_failures",
+    "no_https": "cryptographic_failures",
+    "http_instead_of_https": "cryptographic_failures",
     "unencrypted": "cryptographic_failures",
     "weak_crypto": "cryptographic_failures",
     "weak_encryption": "cryptographic_failures",
     "insecure_protocol": "cryptographic_failures",
+    "missing_encryption": "cryptographic_failures",
 
     # Security Misconfiguration
     "security_misconfiguration": "security_misconfiguration",
@@ -82,6 +88,11 @@ _CANON_MAP = {
     "outdated_components": "vulnerable_components",
     "known_vulnerabilities": "vulnerable_components",
 
+    # Insecure Design (A06:2025) - only for true design flaws
+    "insecure_design": "insecure_design",
+    "design_flaw": "insecure_design",
+    "missing_security_controls": "insecure_design",
+    
     # Other
     "other": "other",
     "noise": "other",
@@ -113,51 +124,62 @@ def canonicalize_label(raw: str) -> str:
 class ClassificationRules:
     """Rules for normalizing and mapping incident classifications."""
     
-    # Map fine-grained labels to OWASP Top 10 categories
+    # Map fine-grained labels to OWASP Top 10:2025 categories
     LABEL_TO_OWASP = {
-        # Injection variants
-        "sql_injection": ("A03", "Injection"),
-        "xss": ("A03", "Injection"),
-        "cross_site_scripting": ("A03", "Injection"),
-        "command_injection": ("A03", "Injection"),
-        "ldap_injection": ("A03", "Injection"),
-        "nosql_injection": ("A03", "Injection"),
-        "injection": ("A03", "Injection"),
+        # Injection variants (A05:2025)
+        "sql_injection": ("A05", "Injection"),
+        "xss": ("A05", "Injection"),
+        "cross_site_scripting": ("A05", "Injection"),
+        "command_injection": ("A05", "Injection"),
+        "ldap_injection": ("A05", "Injection"),
+        "nosql_injection": ("A05", "Injection"),
+        "injection": ("A05", "Injection"),
         
-        # Access control
+        # Access control (A01:2025 - same)
         "broken_access_control": ("A01", "Broken Access Control"),
         "privilege_escalation": ("A01", "Broken Access Control"),
         "idor": ("A01", "Broken Access Control"),
         "unauthorized_access": ("A01", "Broken Access Control"),
         
-        # Authentication
-        "broken_authentication": ("A07", "Identification and Authentication Failures"),
-        "authentication_failure": ("A07", "Identification and Authentication Failures"),
-        "session_hijacking": ("A07", "Identification and Authentication Failures"),
-        "credential_stuffing": ("A07", "Identification and Authentication Failures"),
+        # Authentication (A07:2025)
+        "broken_authentication": ("A07", "Authentication Failures"),
+        "authentication_failure": ("A07", "Authentication Failures"),
+        "session_hijacking": ("A07", "Authentication Failures"),
+        "credential_stuffing": ("A07", "Authentication Failures"),
         
-        # Cryptographic failures
-        "cryptographic_failures": ("A02", "Cryptographic Failures"),
-        "sensitive_data_exposure": ("A02", "Cryptographic Failures"),
-        "weak_encryption": ("A02", "Cryptographic Failures"),
-        "data_leak": ("A02", "Cryptographic Failures"),
+        # Cryptographic failures (A04:2025)
+        "cryptographic_failures": ("A04", "Cryptographic Failures"),
+        "sensitive_data_exposure": ("A04", "Cryptographic Failures"),
+        "weak_encryption": ("A04", "Cryptographic Failures"),
+        "data_leak": ("A04", "Cryptographic Failures"),
         
-        # Misconfiguration
-        "security_misconfiguration": ("A05", "Security Misconfiguration"),
-        "misconfiguration": ("A05", "Security Misconfiguration"),
-        "misconfig": ("A05", "Security Misconfiguration"),
-        "default_credentials": ("A05", "Security Misconfiguration"),
+        # Misconfiguration (A02:2025)
+        "security_misconfiguration": ("A02", "Security Misconfiguration"),
+        "misconfiguration": ("A02", "Security Misconfiguration"),
+        "misconfig": ("A02", "Security Misconfiguration"),
+        "default_credentials": ("A02", "Security Misconfiguration"),
         
-        # Vulnerable components
-        "vulnerable_components": ("A06", "Vulnerable and Outdated Components"),
-        "outdated_components": ("A06", "Vulnerable and Outdated Components"),
-        "known_vulnerability": ("A06", "Vulnerable and Outdated Components"),
+        # Software Supply Chain Failures (A03:2025 - was Vulnerable Components)
+        "vulnerable_components": ("A03", "Software Supply Chain Failures"),
+        "outdated_components": ("A03", "Software Supply Chain Failures"),
+        "known_vulnerability": ("A03", "Software Supply Chain Failures"),
+        "supply_chain": ("A03", "Software Supply Chain Failures"),
         
-        # SSRF
-        "ssrf": ("A10", "Server-Side Request Forgery"),
+        # Mishandling of Exceptional Conditions (A10:2025 - was SSRF)
+        "ssrf": ("A10", "Mishandling of Exceptional Conditions"),
+        "exception_handling": ("A10", "Mishandling of Exceptional Conditions"),
+        "error_handling": ("A10", "Mishandling of Exceptional Conditions"),
         
-        # Insecure design
-        "insecure_design": ("A04", "Insecure Design"),
+        # Insecure design (A06:2025)
+        "insecure_design": ("A06", "Insecure Design"),
+        
+        # Software or Data Integrity Failures (A08:2025 - same)
+        "data_integrity": ("A08", "Software or Data Integrity Failures"),
+        "integrity_failures": ("A08", "Software or Data Integrity Failures"),
+        
+        # Logging & Alerting Failures (A09:2025)
+        "logging_failures": ("A09", "Logging & Alerting Failures"),
+        "monitoring_failures": ("A09", "Logging & Alerting Failures"),
     }
     
     @classmethod
@@ -174,28 +196,53 @@ class ClassificationRules:
         return canonicalize_label(label)
     
     @classmethod
-    def get_owasp_display_name(cls, label: str, show_specific: bool = True) -> str:
+    def get_owasp_display_name(cls, label: str, show_specific: bool = True, version: str = "2025") -> str:
         """
         Get human-readable display name for a classification.
         
         Args:
             label: Classification label
             show_specific: If True, include specific type (e.g., "SQL Injection")
+            version: OWASP version ("2021" or "2025", default: "2025")
         
         Returns:
-            Display string like "A03 - Injection (SQL Injection)"
+            Display string like "A05:2025 - Injection (SQL Injection)" or "A03:2021 - Injection (SQL Injection)"
         """
         # First canonicalize the label
         canonical = canonicalize_label(label)
         
-        # Look up OWASP mapping
+        # Look up OWASP mapping (always uses 2025 mapping internally)
         if canonical in cls.LABEL_TO_OWASP:
             owasp_id, owasp_name = cls.LABEL_TO_OWASP[canonical]
+        elif canonical == "insecure_design":
+            # Only use A06 if it's explicitly insecure_design
+            owasp_id, owasp_name = ("A06", "Insecure Design")
         else:
-            owasp_id, owasp_name = ("A04", "Insecure Design")
+            # Default fallback - try to infer from label
+            if "access" in canonical or "authorization" in canonical or "privilege" in canonical or "idor" in canonical:
+                owasp_id, owasp_name = ("A01", "Broken Access Control")
+            elif "crypto" in canonical or "encrypt" in canonical or "plaintext" in canonical or "tls" in canonical or "https" in canonical or "data_exposure" in canonical:
+                owasp_id, owasp_name = ("A04", "Cryptographic Failures")
+            elif "injection" in canonical or "xss" in canonical or "sql" in canonical:
+                owasp_id, owasp_name = ("A05", "Injection")
+            elif "authentication" in canonical or "session" in canonical or "password" in canonical or "login" in canonical or "auth" in canonical:
+                owasp_id, owasp_name = ("A07", "Authentication Failures")
+            else:
+                owasp_id, owasp_name = ("A06", "Insecure Design")  # Last resort
+        
+        # Convert to 2021 if needed
+        if version == "2021":
+            try:
+                from owasp_compatibility import convert_2025_to_2021, OWASP_2021
+                owasp_id_2021 = convert_2025_to_2021(owasp_id)
+                owasp_name_2021 = OWASP_2021.get(owasp_id_2021, owasp_name)
+                owasp_id = owasp_id_2021
+                owasp_name = owasp_name_2021
+            except:
+                pass  # Fallback to 2025 if conversion fails
         
         if show_specific and label:
             specific = label.replace("_", " ").title()
-            return f"{owasp_id} - {owasp_name} ({specific})"
+            return f"{owasp_id}:{version} - {owasp_name} ({specific})"
         else:
-            return f"{owasp_id} - {owasp_name}"
+            return f"{owasp_id}:{version} - {owasp_name}"
